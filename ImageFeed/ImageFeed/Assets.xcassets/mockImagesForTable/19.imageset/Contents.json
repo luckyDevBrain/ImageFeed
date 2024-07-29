@@ -3,13 +3,10 @@
     {
       "filename" : "19.jpg",
       "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "19 1.jpg",
       "idiom" : "universal",
       "scale" : "3x"
     }
