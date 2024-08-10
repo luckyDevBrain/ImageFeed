@@ -21,28 +21,24 @@ final class SingleImageViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private let shareButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "share_button"), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     private let backButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "nav_back_button_white"), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -53,20 +49,14 @@ final class SingleImageViewController: UIViewController {
         
         scrollView.delegate = self
         
-        view.addSubview(scrollView)
-        scrollView.addSubview(imageView)
-        view.addSubview(shareButton)
-        view.addSubview(backButton)
-        
         setupConstraints()
         
         shareButton.addTarget(self, action: #selector(didTapShareButton(_:)), for: .touchUpInside)
         backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
         
-        if let image = image {
-            imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
-        }
+        guard let image = image else { return }
+        imageView.image = image
+        rescaleAndCenterImageInScrollView(image: image)
     }
     
     override func viewDidLayoutSubviews() {
@@ -75,6 +65,12 @@ final class SingleImageViewController: UIViewController {
     }
     
     private func setupConstraints() {
+        // Add subviews and disable autoresizing mask constraints
+        [scrollView, imageView, shareButton, backButton].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
