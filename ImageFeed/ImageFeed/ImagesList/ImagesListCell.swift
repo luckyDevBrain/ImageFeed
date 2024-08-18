@@ -36,3 +36,13 @@ final class ImagesListCell: UITableViewCell {
         gradientLayer.frame = CGRect(x: 0, y: dateLabelFrame.minY, width: cellImage.bounds.width, height: gradientHeight)
     }
 }
+
+/* 
+ нужен ли код ниже? 
+ 
+ func configure(with image: UIImage?, date: String, isLiked: Bool) {
+         cellImage.image = image ?? UIImage(named: "placeholder")
+         dateLabel.text = date
+         likeButton.isSelected = isLiked
+     }
+ */

@@ -51,7 +51,7 @@ final class SingleImageViewController: UIViewController {
         
         setupConstraints()
         
-        shareButton.addTarget(self, action: #selector(didTapShareButton(_:)), for: .touchUpInside)
+        shareButton.addTarget(self, action: #selector(didTapShareButton), for: .touchUpInside)
         backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
         
         guard let image = image else { return }

@@ -95,6 +95,20 @@ extension ImagesListViewController {
     }
 }
 
+/*
+ нужен ли код ниже?
+ 
+ func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+         let imageName = photosName[indexPath.row]
+         let image = UIImage(named: imageName) ?? UIImage(named: "placeholder")
+         let date = dateFormatter.string(from: Date())
+         let isLiked = indexPath.row % 2 == 0
+         
+         cell.configure(with: image, date: date, isLiked: isLiked)
+         cell.selectionStyle = .none
+     }
+ */
+
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)

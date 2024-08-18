@@ -102,6 +102,22 @@ final class ProfileViewController: UIViewController {
         } else {
             descriptionLabel.text = "Hello, world!"
         }
+        performLogout()
         print("Logout tapped")
+    }
+    
+    // нужен ли код ниже?
+    private func performLogout() {
+        // Реальная логика выхода из аккаунта
+        // Например, удаление токена из хранилища и переход на экран входа
+        OAuth2TokenStorage.shared.token = nil
+        switchToLoginScreen()
+    }
+    
+    private func switchToLoginScreen() {
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+        let loginViewController = UIStoryboard(name: "Main", bundle: .main)
+            .instantiateViewController(withIdentifier: "SplashViewController")
+        window.rootViewController = loginViewController
     }
 }
