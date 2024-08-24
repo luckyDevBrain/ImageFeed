@@ -13,21 +13,13 @@ final class OAuth2Service {
     private var networkClient: NetworkClient
     private let tokenStorage = OAuth2TokenStorage()
     
-    private enum JSONError: Error {
-        case decodingError
-    }
-    
     private init(networkClient: NetworkClient) {
         self.networkClient = networkClient
     }
     
     private(set) var authToken: String? {
-        get{
-            return tokenStorage.token
-        }
-        set{
-            tokenStorage.token = newValue
-        }
+        get { tokenStorage.token }
+        set { tokenStorage.token = newValue }
     }
     
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
@@ -41,6 +33,7 @@ final class OAuth2Service {
             + "&&grant_type=authorization_code",
             relativeTo: baseURL
         ) else {
+            print("Failed to create URL from components.")
             return nil
         }
         var request = URLRequest(url: url)
@@ -49,9 +42,12 @@ final class OAuth2Service {
     }
     
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        
         guard let request = makeOAuthTokenRequest(code: code) else {
-            print("Failed to create URL request.")
+            DispatchQueue.main.async {
+                let error = NSError(domain: "OAuth2Service", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create URL request."])
+                print("Error: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
             return
         }
         
@@ -60,16 +56,23 @@ final class OAuth2Service {
                 switch result {
                 case .success(let data):
                     do {
-                        let response = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
+                        
+                        if let jsonString = String(data: data, encoding: .utf8) {
+                            print("JSON Response: \(jsonString)")
+                        }
+                        
+                        let decoder = JSONDecoder()
+                        decoder.keyDecodingStrategy = .convertFromSnakeCase
+                        let response = try decoder.decode(OAuthTokenResponseBody.self, from: data)
+                        self.authToken = response.accessToken
                         completion(.success(response.accessToken))
-                        print("accessToken: \(response.accessToken) have been decoded")
                     } catch {
-                        completion(.failure(JSONError.decodingError))
                         print("JSON decoding error: \(error.localizedDescription)")
+                        completion(.failure(error))
                     }
                 case .failure(let error):
+                    print("Network error: \(error.localizedDescription)")
                     completion(.failure(error))
-                    print(error.localizedDescription)
                 }
             }
         }

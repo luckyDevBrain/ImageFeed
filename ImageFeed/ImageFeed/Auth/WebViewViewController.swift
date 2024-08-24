@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-fileprivate let UnsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+fileprivate let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
 
 protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
@@ -16,100 +16,19 @@ protocol WebViewViewControllerDelegate: AnyObject {
 }
 
 final class WebViewViewController: UIViewController {
-    
-    private lazy var webView: WKWebView = {
-        let webView = WKWebView()
-        return webView
-    }()
+    @IBOutlet private var webView: WKWebView!
+    @IBOutlet private var progressView: UIProgressView!
     
     weak var delegate: WebViewViewControllerDelegate?
-    
-    private let progressView: UIProgressView = {
-        let progressView = UIProgressView(progressViewStyle: .default)
-        progressView.progressTintColor = UIColor(red: 0.1, green: 0.11, blue: 0.13, alpha: 1.0)
-        progressView.progress = 0.5
-        return progressView
-    }()
-    
-    private let backButton: UIButton = {
-        let button = UIButton(type: .custom)
-        if let image = UIImage(named: "nav_back_button") {
-            button.setImage(image, for: .normal)
-        } else {
-            print("Error: Image 'nav_back_button' not found")
-        }
-        return button
-    }()
     
     override func viewDidLoad() {
             super.viewDidLoad()
             webView.navigationDelegate = self
             
             view.backgroundColor = .white
-            
-            setupWebView()
-            setupNavigationBar()
+
             loadAuthView()
-            
-            backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
-            
         }
-        
-        private func setupWebView() {
-            webView = WKWebView()
-            webView.navigationDelegate = self
-            
-            // Добавляем webView на экран
-            view.addSubview(webView)
-            webView.translatesAutoresizingMaskIntoConstraints = false
-            
-            NSLayoutConstraint.activate([
-                webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
-        }
-        
-        // Настройка навигационной панели
-        private func setupNavigationBar() {
-            // Создаем контейнер для кнопки и прогресс-бара
-            let containerView = UIView()
-            
-            containerView.addSubview(backButton)
-            containerView.addSubview(progressView)
-            
-            backButton.translatesAutoresizingMaskIntoConstraints = false
-            progressView.translatesAutoresizingMaskIntoConstraints = false
-            
-            // Добавляем constraints для backButton и progressView внутри контейнера
-            NSLayoutConstraint.activate([
-                backButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                backButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -4),
-                
-                progressView.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 8),
-                progressView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-                progressView.centerYAnchor.constraint(equalTo: backButton.centerYAnchor)
-            ])
-            
-            // Настройка размеров контейнера
-            containerView.translatesAutoresizingMaskIntoConstraints = false
-            containerView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width).isActive = true
-            containerView.heightAnchor.constraint(equalToConstant: 44).isActive = true
-            
-            // Добавляем контейнер в `navigationItem`
-            let customBarButtonItem = UIBarButtonItem(customView: containerView)
-            navigationItem.leftBarButtonItem = customBarButtonItem
-        }
-    
-    enum WebViewConsants{
-        static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-    }
-    
-    @objc private func didTapBackButton() {
-        delegate?.webViewViewControllerDidCancel(self)
-        navigationController?.popViewController(animated: true)
-    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -118,11 +37,16 @@ final class WebViewViewController: UIViewController {
             forKeyPath: #keyPath(WKWebView.estimatedProgress),
             options: .new,
             context: nil)
-        updateProgress()
+        // updateProgress()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        if self.isMovingFromParent { // Проверка, что экран закрывается через кнопку «Назад»
+                    delegate?.webViewViewControllerDidCancel(self)
+                }
+        
         webView.removeObserver(
             self,
             forKeyPath: #keyPath(WKWebView.estimatedProgress),
@@ -133,8 +57,8 @@ final class WebViewViewController: UIViewController {
         forKeyPath keyPath: String?,
         of object: Any?,
         change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?) {
-            
+        context: UnsafeMutableRawPointer?
+    ) {
             if keyPath == #keyPath(WKWebView.estimatedProgress) {
                 updateProgress()
             } else {
@@ -152,7 +76,7 @@ final class WebViewViewController: UIViewController {
     }
     
     private func loadAuthView() {
-        guard var urlComponents = URLComponents(string: UnsplashAuthorizeURLString) else {
+        guard var urlComponents = URLComponents(string: unsplashAuthorizeURLString) else {
             print("Error: Unable to create URLComponents")
             return
         }
@@ -188,7 +112,7 @@ extension WebViewViewController: WKNavigationDelegate {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             print("DEBUG:", "WebViewViewController Delegate called with code: \(code)")
             decisionHandler(.cancel)
-            dismiss(animated: true)
+            // dismiss(animated: true)
         } else {
             decisionHandler(.allow)
         }

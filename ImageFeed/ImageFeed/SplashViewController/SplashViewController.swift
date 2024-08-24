@@ -9,9 +9,12 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-    
-    let oauth2Service = OAuth2Service.shared
     private let oauth2TokenStorage = OAuth2TokenStorage()
+    let oauth2Service = OAuth2Service.shared
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -21,10 +24,6 @@ final class SplashViewController: UIViewController {
         } else {
             performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
         }
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
     }
     
     private func switchToTabBarController() {
@@ -42,19 +41,14 @@ extension SplashViewController {
         if segue.identifier == ShowAuthenticationScreenSegueIdentifier {
             guard
                 let navigationController = segue.destination as? UINavigationController,
-                let viewController = navigationController.viewControllers.first as? AuthViewController else { showErrorAlert(message: "Failed to prepare for \(ShowAuthenticationScreenSegueIdentifier)")
+                let viewController = navigationController.viewControllers[0] as? AuthViewController else {
+                assertionFailure("Failed to prepare for \(ShowAuthenticationScreenSegueIdentifier)")
                 return
             }
             viewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)
         }
-    }
-    
-    private func showErrorAlert(message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
     }
 }
 

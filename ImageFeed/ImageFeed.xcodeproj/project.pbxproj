@@ -48,6 +48,7 @@
 		73BEB52C2C578B8900EE0679 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		73BEB52F2C5C19DB00EE0679 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		73BEB5322C601D5900EE0679 /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
+		73F8011F2C7A5A7A00523FEF /* SFPro.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SFPro.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +129,7 @@
 				73BEB51B2C496B3000EE0679 /* Main.storyboard */,
 				73BEB51E2C496B3100EE0679 /* Assets.xcassets */,
 				73BEB5202C496B3100EE0679 /* LaunchScreen.storyboard */,
+				73F8011F2C7A5A7A00523FEF /* SFPro.ttf */,
 				73BEB5232C496B3100EE0679 /* Info.plist */,
 			);
 			path = ImageFeed;

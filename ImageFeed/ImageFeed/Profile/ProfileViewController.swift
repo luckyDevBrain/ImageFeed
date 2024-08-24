@@ -94,11 +94,6 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func didTapLogoutButton() {
-        if descriptionLabel.text == "Hello, world!" {
-            descriptionLabel.text = "Ура, теперь у меня миллион подписчиков!"
-        } else {
-            descriptionLabel.text = "Hello, world!"
-        }
         performLogout()
         print("Logout tapped")
     }
