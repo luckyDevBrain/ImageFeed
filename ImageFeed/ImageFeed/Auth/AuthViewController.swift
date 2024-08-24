@@ -5,6 +5,7 @@
 //  Created by Kirill on 11.08.2024.
 //
 
+import Foundation
 import UIKit
 
 protocol AuthViewControllerDelegate: AnyObject {
@@ -12,13 +13,11 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-    private let ShowWebViewSegueIdentifier = "ShowWebView"
+    private let oauth2Service = OAuth2Service.shared
     
+    private let ShowWebViewSegueIdentifier = "ShowWebView"
     weak var delegate: AuthViewControllerDelegate?
     
-    let oauth2Service = OAuth2Service.shared
-    
-    // Создаем элементы интерфейса
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "auth_screen_logo")
@@ -33,6 +32,7 @@ final class AuthViewController: UIViewController {
         button.backgroundColor = .white
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
+        button.contentMode = .scaleToFill
         return button
     }()
     
@@ -42,37 +42,43 @@ final class AuthViewController: UIViewController {
         view.backgroundColor = UIColor(red: 0.1, green: 0.11, blue: 0.13, alpha: 1.0)
         
         setupConstraints()
+        configureBackButton()
         
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == ShowWebViewSegueIdentifier {
-            guard let webViewViewController = segue.destination as? WebViewViewController else { fatalError("Failed to prepare for \(ShowWebViewSegueIdentifier)")
-            }
-            webViewViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
+    private func configureBackButton() {
+        navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem?.tintColor = UIColor(named: "ypBlack")
     }
+    /*
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     if segue.identifier == ShowWebViewSegueIdentifier {
+     guard
+     let webViewViewController = segue.destination as? WebViewViewController else {
+     let alert = UIAlertController(title: "Ошибка", message: "Не удалось подготовить экран авторизации.", preferredStyle: .alert)
+     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+     present(alert, animated: true, completion: nil)
+     return
+     }
+     webViewViewController.delegate = self
+     } else {
+     super.prepare(for: segue, sender: sender)
+     }
+     }
+     */
     
     @objc private func loginButtonTapped() {
         let webViewController = WebViewViewController()
         webViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: webViewController)
-        present(navigationController, animated: true)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
     }
     
-    /*
-     let webViewVC = WebViewViewController()
-     webViewVC.delegate = self // Устанавливаем делегат
-     performSegue(withIdentifier: ShowWebViewSegueIdentifier, sender: nil)
-     navigationController?.pushViewController(webViewVC, animated: true)
-     лучше оставить этот кусок кода?
-     */
-    
     private func setupConstraints() {
-        // Add subviews and set translatesAutoresizingMaskIntoConstraints
         [logoImageView, loginButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -95,30 +101,25 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        navigationController?.popToRootViewController(animated: true)
-        
-        oauth2Service.fetchOAuthToken(code) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let strongSelf = self else {
-                                    // Обработка случая, когда self равен nil
-                                    return
-                                }
-                
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.oauth2Service.fetchOAuthToken(code) { result in
                 switch result {
                 case .success(let token):
-                    print("Received OAuth token: \(token)")
-                    // Сохранение токена
-                    OAuth2TokenStorage().token = token
-                    strongSelf.delegate?.didAuthenticate(strongSelf, didAuthenticateWithCode: code)
+                    DispatchQueue.main.async {
+                        OAuth2TokenStorage().token = token
+                        print("Actual token: \(token)")
+                        self.delegate?.didAuthenticate(self, didAuthenticateWithCode: code)
+                    }
                 case .failure(let error):
-                    print("Failed to get OAuth token: \(error)")
-                    // Обработка ошибки
+                    print("Failed to fetch OAuth token: \(error)")
                 }
             }
         }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        navigationController?.popViewController(animated: true)
+        dismiss(animated: true)
+        // navigationController?.popViewController(animated: true)
     }
 }

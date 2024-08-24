@@ -11,8 +11,9 @@ final class SingleImageViewController: UIViewController {
     
     var image: UIImage? {
         didSet {
-            guard isViewLoaded, let image = image else { return }
+            guard isViewLoaded, let image else { return }
             imageView.image = image
+            imageView.frame.size = image.size
             rescaleAndCenterImageInScrollView(image: image)
         }
     }
@@ -65,7 +66,6 @@ final class SingleImageViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        // Add subviews and disable autoresizing mask constraints
         [scrollView, imageView, shareButton, backButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -101,28 +101,29 @@ final class SingleImageViewController: UIViewController {
     }
     
     @objc private func didTapShareButton(_ sender: UIButton) {
-        guard let image = imageView.image else { return }
-        let share = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        guard let image  else { return }
+        let share = UIActivityViewController(
+            activityItems: [image],
+            applicationActivities: nil
+        )
         present(share, animated: true, completion: nil)
     }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
-        let scrollViewSize = scrollView.bounds.size
+        let minZoomScale = scrollView.minimumZoomScale
+        let maxZoomScale = scrollView.maximumZoomScale
+        view.layoutIfNeeded()
+        let visibleRectSize = scrollView.bounds.size
         let imageSize = image.size
-        let hScale = scrollViewSize.width / imageSize.width
-        let vScale = scrollViewSize.height / imageSize.height
-        let scale = min(scrollView.maximumZoomScale, max(scrollView.minimumZoomScale, min(hScale, vScale)))
+        let hScale = visibleRectSize.width / imageSize.width
+        let vScale = visibleRectSize.height / imageSize.height
+        let scale = min(maxZoomScale, max(minZoomScale, min(hScale, vScale)))
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
-        centerImage()
-    }
-    
-    private func centerImage() {
-        let scrollViewSize = scrollView.bounds.size
-        let imageSize = imageView.frame.size
-        let verticalInset = max(0, (scrollViewSize.height - imageSize.height) / 2)
-        let horizontalInset = max(0, (scrollViewSize.width - imageSize.width) / 2)
-        scrollView.contentInset = UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset)
+        let newContentSize = scrollView.contentSize
+        let x = (newContentSize.width - visibleRectSize.width) / 2
+        let y = (newContentSize.height - visibleRectSize.height) / 2
+        scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -132,10 +133,6 @@ final class SingleImageViewController: UIViewController {
 
 extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return imageView
-    }
-    
-    func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        centerImage()
+        imageView
     }
 }

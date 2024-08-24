@@ -162,16 +162,16 @@
         <!--Auth View Controller-->
         <scene sceneID="ee9-aF-Zkn">
             <objects>
-                <viewController id="cd1-cB-DVO" customClass="AuthViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AuthViewController" id="cd1-cB-DVO" customClass="AuthViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Zpo-oH-lqA">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="LYT-mL-Aht"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="UB9-k1-G66"/>
                     <connections>
-                        <segue destination="vsh-rL-NLx" kind="presentation" identifier="ShowWebView" modalPresentationStyle="overFullScreen" modalTransitionStyle="crossDissolve" id="ugu-3d-hTl"/>
+                        <segue destination="vsh-rL-NLx" kind="presentation" identifier="ShowWebView" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="ugu-3d-hTl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="djM-I8-mi9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -181,7 +181,7 @@
         <!--Web View View Controller-->
         <scene sceneID="7S4-1b-iGH">
             <objects>
-                <viewController id="vsh-rL-NLx" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WebViewViewController" id="vsh-rL-NLx" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zR6-ZO-1HX">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -200,7 +200,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="KZG-lC-QPz" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="mOW-q9-o54">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -222,8 +222,10 @@
                         <viewLayoutGuide key="safeArea" id="N4S-dk-xU1"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <tabBarItem key="tabBarItem" title="Unsplash" id="2At-OH-1NK"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <segue destination="KZG-lC-QPz" kind="presentation" identifier="ShowAuthenticationScreen" id="jqj-Ez-Z7G"/>
+                        <segue destination="KZG-lC-QPz" kind="presentation" identifier="ShowAuthenticationScreen" modalPresentationStyle="fullScreen" id="jqj-Ez-Z7G"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1kH-Dd-EhR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
