@@ -9,8 +9,7 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-    private let oauth2TokenStorage = OAuth2TokenStorage()
-    let oauth2Service = OAuth2Service.shared
+    private let oauth2TokenStorage = OAuth2TokenStorage.shared
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
@@ -27,7 +26,7 @@ final class SplashViewController: UIViewController {
     }
     
     private func switchToTabBarController() {
-        guard let window = UIApplication.shared.windows.first else { assertionFailure("Invalid Configuration")
+        guard let window = UIApplication.shared.windows.first else { assertionFailure("Invalid window configuration")
             return
         }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
@@ -41,8 +40,9 @@ extension SplashViewController {
         if segue.identifier == ShowAuthenticationScreenSegueIdentifier {
             guard
                 let navigationController = segue.destination as? UINavigationController,
-                let viewController = navigationController.viewControllers[0] as? AuthViewController else {
-                assertionFailure("Failed to prepare for \(ShowAuthenticationScreenSegueIdentifier)")
+                let viewController = navigationController.viewControllers[0] as? AuthViewController
+            else {
+                assertionFailure("Failed to prepare for \(segue.identifier ?? "ShowAuthenticationScreenSegueIdentifier")")
                 return
             }
             viewController.delegate = self
@@ -54,25 +54,31 @@ extension SplashViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        vc.dismiss(animated: true) // { [weak self] in
+        vc.dismiss(animated: true)
+        
+        guard oauth2TokenStorage.token != nil else {
+            print("Token error")
+            return
         }
+        switchToTabBarController()
     }
-    /* guard let self = self else { return }
-     // self.fetchOAuthToken(code)
-     }
-     }
-     
-     private func fetchOAuthToken(_ code: String) {
-     oauth2Service.fetchOAuthToken(code) { [weak self] result in
-     guard let self = self else { return }
-     switch result {
-     case .success:
-     self.switchToTabBarController()
-     case .failure(let error):
-     print("Failed to fetch OAuth token: \(error)")
-     // TODO [Sprint 11]: Add proper error handling
-     }
-     }
-     }
-     }
-     */
+}
+/* guard let self = self else { return }
+ // self.fetchOAuthToken(code)
+ }
+ }
+ 
+ private func fetchOAuthToken(_ code: String) {
+ oauth2Service.fetchOAuthToken(code) { [weak self] result in
+ guard let self = self else { return }
+ switch result {
+ case .success:
+ self.switchToTabBarController()
+ case .failure(let error):
+ print("Failed to fetch OAuth token: \(error)")
+ // TODO [Sprint 11]: Add proper error handling
+ }
+ }
+ }
+ }
+ */

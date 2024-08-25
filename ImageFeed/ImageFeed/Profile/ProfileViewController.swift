@@ -9,8 +9,6 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     
-    private let oauth2TokenStorage = OAuth2TokenStorage()
-    
     private var avatarImageView: UIImageView = {
         let view = UIImageView(image: UIImage(named: "avatar"))
         view.layer.cornerRadius = 35
@@ -94,10 +92,11 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func didTapLogoutButton() {
-        performLogout()
-        print("Logout tapped")
+        // performLogout()
+        // print("Logout tapped")
     }
-    
+}
+     /*
     private func performLogout() {
         // Реальная логика выхода из аккаунта
         // Например, удаление токена из хранилища и переход на экран входа
@@ -112,3 +111,4 @@ final class ProfileViewController: UIViewController {
         window.rootViewController = loginViewController
     }
 }
+*/

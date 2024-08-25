@@ -22,13 +22,14 @@ final class WebViewViewController: UIViewController {
     weak var delegate: WebViewViewControllerDelegate?
     
     override func viewDidLoad() {
-            super.viewDidLoad()
-            webView.navigationDelegate = self
-            
-            view.backgroundColor = .white
-
-            loadAuthView()
-        }
+        super.viewDidLoad()
+        webView.navigationDelegate = self
+        
+        view.backgroundColor = .white
+        
+        loadAuthView()
+        updateProgress()
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -37,16 +38,11 @@ final class WebViewViewController: UIViewController {
             forKeyPath: #keyPath(WKWebView.estimatedProgress),
             options: .new,
             context: nil)
-        // updateProgress()
+        updateProgress()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        if self.isMovingFromParent { // Проверка, что экран закрывается через кнопку «Назад»
-                    delegate?.webViewViewControllerDidCancel(self)
-                }
-        
         webView.removeObserver(
             self,
             forKeyPath: #keyPath(WKWebView.estimatedProgress),
@@ -59,16 +55,16 @@ final class WebViewViewController: UIViewController {
         change: [NSKeyValueChangeKey : Any]?,
         context: UnsafeMutableRawPointer?
     ) {
-            if keyPath == #keyPath(WKWebView.estimatedProgress) {
-                updateProgress()
-            } else {
-                super.observeValue(
-                    forKeyPath: keyPath,
-                    of: object,
-                    change: change,
-                    context: context)
-            }
+        if keyPath == #keyPath(WKWebView.estimatedProgress) {
+            updateProgress()
+        } else {
+            super.observeValue(
+                forKeyPath: keyPath,
+                of: object,
+                change: change,
+                context: context)
         }
+    }
     
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
@@ -98,7 +94,11 @@ final class WebViewViewController: UIViewController {
         let request = URLRequest(url: url)
         webView.load(request)
         
-       // updateProgress()
+        // updateProgress()
+    }
+    
+    @IBAction private func didTapBackButton(_ sender: Any?) {
+        delegate?.webViewViewControllerDidCancel(WebViewViewController())
     }
 }
 
@@ -112,7 +112,6 @@ extension WebViewViewController: WKNavigationDelegate {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             print("DEBUG:", "WebViewViewController Delegate called with code: \(code)")
             decisionHandler(.cancel)
-            // dismiss(animated: true)
         } else {
             decisionHandler(.allow)
         }
