@@ -73,7 +73,7 @@ final class WebViewViewController: UIViewController {
     
     private func loadAuthView() {
         guard var urlComponents = URLComponents(string: unsplashAuthorizeURLString) else {
-            print("Error: Unable to create URLComponents")
+            print("Error: Unable to create URLComponents for authorization.")
             return
         }
         
@@ -85,7 +85,7 @@ final class WebViewViewController: UIViewController {
         ]
         
         guard let url = urlComponents.url else {
-            print("Error: Unable to create URL from URLComponents")
+            print("Error: Unable to create URL from URLComponents. Components: \(urlComponents)")
             return
         }
         
@@ -94,7 +94,7 @@ final class WebViewViewController: UIViewController {
         let request = URLRequest(url: url)
         webView.load(request)
         
-        // updateProgress()
+        updateProgress()
     }
     
     @IBAction private func didTapBackButton(_ sender: Any?) {
@@ -113,6 +113,7 @@ extension WebViewViewController: WKNavigationDelegate {
             print("DEBUG:", "WebViewViewController Delegate called with code: \(code)")
             decisionHandler(.cancel)
         } else {
+            print("Error: No code found in URL.")
             decisionHandler(.allow)
         }
     }
@@ -127,9 +128,8 @@ extension WebViewViewController: WKNavigationDelegate {
         {
             return codeItem.value
         } else {
+            print("Error: Unable to extract code from URL: \(String(describing: navigationAction.request.url))")
             return nil
         }
     }
 }
-
-

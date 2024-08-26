@@ -26,6 +26,8 @@ final class OAuth2Service {
     func fetchOAuthToken(code: String, completion: @escaping (_ result: Result<String, Error>) -> Void) {
         guard let tokenRequest = makeOAuthTokenRequest(code: code)
         else {
+            print("Error: Unable to create token request.")
+            completion(.failure(AuthServiceError.invalidRequest))
             return
         }
         
@@ -34,19 +36,22 @@ final class OAuth2Service {
             if lastCode != code {
                 task?.cancel()
             } else {
+                print("Error: Request with the same code already exists.")
                 completion(.failure(AuthServiceError.invalidRequest))
                 return
             }
         } else {
             if lastCode == code {
+                print("Error: Request with the same code already exists.")
                 completion(.failure(AuthServiceError.invalidRequest))
                 return
             }
         }
         lastCode = code
         
-        let task = URLSession.shared.data(for: tokenRequest) { result in
+        let task = URLSession.shared.data(for: tokenRequest) { [weak self] result in
             DispatchQueue.main.async {
+                guard let self = self else { return }
                 switch result {
                 case .success(let data):
                     let decoder = JSONDecoder()
@@ -56,7 +61,7 @@ final class OAuth2Service {
                         
                         self.task = nil
                         self.lastCode = nil
-                    
+                        
                         print("Success token: \(response.accessToken)")
                         completion(.success(response.accessToken))
                     } catch {
@@ -77,7 +82,8 @@ final class OAuth2Service {
 private func makeOAuthTokenRequest(code: String) -> URLRequest? {
     guard let baseURL = URL(string: "https://unsplash.com")
     else {
-        preconditionFailure("Unable to construct baseURL")
+        print("Failed to create baseURL for OAuth request")
+        return nil
     }
     guard let url = URL(
         string: "/oauth/token"
@@ -88,6 +94,7 @@ private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         + "&&grant_type=authorization_code",
         relativeTo: baseURL
     ) else {
+        print("Failed to construct URL for OAuth token request with baseURL: \(String(describing: baseURL)) and code: \(code)")
         preconditionFailure("Unable to construct url")
     }
     var request = URLRequest(url: url)

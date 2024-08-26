@@ -24,6 +24,7 @@
 		73BEB52D2C578B8900EE0679 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BEB52C2C578B8900EE0679 /* UIColor+Extensions.swift */; };
 		73BEB5302C5C19DB00EE0679 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BEB52F2C5C19DB00EE0679 /* ProfileViewController.swift */; };
 		73BEB5332C601D5900EE0679 /* SingleImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BEB5322C601D5900EE0679 /* SingleImageViewController.swift */; };
+		73D05E4C2C7D228300CBF8ED /* SFPro.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73F8011F2C7A5A7A00523FEF /* SFPro.ttf */; };
 		73F801212C7B990200523FEF /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F801202C7B990200523FEF /* NetworkClient.swift */; };
 /* End PBXBuildFile section */
 
@@ -222,6 +223,7 @@
 				73BEB51F2C496B3100EE0679 /* Assets.xcassets in Resources */,
 				73BEB5222C496B3100EE0679 /* Base in Resources */,
 				73BEB51D2C496B3000EE0679 /* Base in Resources */,
+				73D05E4C2C7D228300CBF8ED /* SFPro.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
