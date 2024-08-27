@@ -18,6 +18,14 @@ final class AuthViewController: UIViewController {
     
     weak var delegate: AuthViewControllerDelegate?
     
+    @IBOutlet weak var loginButton: UIButton! {
+        didSet {
+            loginButton.layer.cornerRadius = 16
+            loginButton.layer.masksToBounds = true
+            loginButton.titleLabel?.font = UIFont(name: "SFPro-Bold", size: 17)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
