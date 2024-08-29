@@ -9,7 +9,6 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     
-    // UI Elements
     private var avatarImageView: UIImageView = {
         let view = UIImageView(image: UIImage(named: "avatar"))
         view.layer.cornerRadius = 35
@@ -17,91 +16,99 @@ final class ProfileViewController: UIViewController {
         return view
     }()
     
-    // Name Label
     private var nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Екатерина Кузнецова"
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         return label
     }()
     
-    // Login Name Label
     private var loginNameLabel: UILabel = {
         let label = UILabel()
         label.text = "@ekaterina_kuz"
-        label.textColor = .gray
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = UIColor(named: "subTextColor")
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         return label
     }()
     
-    // Description Label
     private var descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "Hello, world!"
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         return label
     }()
     
-    // Logout Button
     private var logoutButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "logout_button")!, for: .normal)
-        button.tintColor = .red
+        if let image = UIImage(named: "logout_button") {
+            button.setImage(image, for: .normal)
+        } else {
+            print("Error: Image 'logout_button' not found")
+        }
+        button.tintColor = UIColor(named: "colorRed")
         return button
     }()
     
-    // Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = .ypBlack
         
         setupConstraints()
         
         logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
     }
     
-    // Constraints Setup
     private func setupConstraints() {
-        // Add subviews and set translatesAutoresizingMaskIntoConstraints
         [avatarImageView, nameLabel, loginNameLabel, descriptionLabel, logoutButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            // Avatar ImageView
-            avatarImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            avatarImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            avatarImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 76),
+            avatarImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             avatarImageView.widthAnchor.constraint(equalToConstant: 70),
             avatarImageView.heightAnchor.constraint(equalToConstant: 70),
             
-            // Name Label
-            nameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 12),
+            logoutButton.heightAnchor.constraint(equalToConstant: 44),
+            logoutButton.widthAnchor.constraint(equalToConstant: 44),
+            logoutButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
+            logoutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            nameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 8),
             nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
             
-            // Login Name Label
-            loginNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
-            loginNameLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
+            loginNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
+            loginNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             
-            // Description Label
             descriptionLabel.topAnchor.constraint(equalTo: loginNameLabel.bottomAnchor, constant: 8),
-            descriptionLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
+            descriptionLabel.leadingAnchor.constraint(equalTo: loginNameLabel.leadingAnchor),
             
-            // Logout Button
-            logoutButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
-            logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+            
         ])
     }
     
-    // Logout Button Action
     @objc private func didTapLogoutButton() {
-        // Implement logout functionality
-        if descriptionLabel.text == "Hello, world!" {
-            descriptionLabel.text = "Ура, теперь у меня миллион подписчиков!"
-        } else {
-            descriptionLabel.text = "Hello, world!"
-        }
-        print("Logout tapped")
+        // performLogout()
+        // print("Logout tapped")
     }
 }
+     /*
+    private func performLogout() {
+        // Реальная логика выхода из аккаунта
+        // Например, удаление токена из хранилища и переход на экран входа
+        oauth2TokenStorage.token = nil
+        switchToLoginScreen()
+    }
+    
+    private func switchToLoginScreen() {
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+        let loginViewController = UIStoryboard(name: "Main", bundle: .main)
+            .instantiateViewController(withIdentifier: "SplashViewController")
+        window.rootViewController = loginViewController
+    }
+}
+*/

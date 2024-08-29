@@ -10,6 +10,7 @@ import UIKit
 // Расширение для UIColor для работы с HEX значениями
 extension UIColor {
     convenience init(hex: String) {
+        // Удаление всех символов, кроме шестнадцатеричных
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int = UInt64()
         Scanner(string: hex).scanHexInt64(&int)
@@ -22,7 +23,9 @@ extension UIColor {
         case 8: // ARGB (32-bit)
             (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:
+            // Некорректное значение HEX, устанавливаем цвет по умолчанию (черный)
             (a, r, g, b) = (255, 0, 0, 0)
+            print("Invalid HEX string, setting color to default (black).")
         }
         self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
     }
