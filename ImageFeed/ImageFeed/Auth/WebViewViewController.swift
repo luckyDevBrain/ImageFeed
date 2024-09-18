@@ -28,16 +28,16 @@ final class WebViewViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        setNeedsStatusBarAppearanceUpdate()
-        estimatedProgressObservation = webView.observe(\
-            .estimatedProgress,
-            options: [],
-            changeHandler: { [weak self] _, _ in
-            guard let self else { return }
-            self.updateProgress()})
-    }
+            super.viewWillAppear(animated)
+            setNeedsStatusBarAppearanceUpdate()
+            
+            estimatedProgressObservation = webView.observe(
+                \.estimatedProgress,
+                options: [],
+                changeHandler: { [weak self] _, _ in
+                    self?.updateProgress()
+                })
+        }
     
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
