@@ -13,5 +13,14 @@ enum Constants {
     static  let redirectURI = "urn:ietf:wg:oauth:2.0:oob"
     static  let accessScope = "public+read_user+write_likes"
     static  let defaultBaseURL = URL(string: "https://api.unsplash.com/")
+    static let defaultURL = URL(string: "https://unsplash.com/")
+    static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+    static let reuseIdentifier = "ImagesListCell"
+    static let code = "code"
+    static let path = "/oauth/authorize/native"
+}
+
+enum AuthServiceError: Error {
+    case invalidRequest
 }
 

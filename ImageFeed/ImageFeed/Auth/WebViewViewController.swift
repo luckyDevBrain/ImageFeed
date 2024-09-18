@@ -8,62 +8,35 @@
 import UIKit
 import WebKit
 
-fileprivate let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-
-protocol WebViewViewControllerDelegate: AnyObject {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController)
-}
-
 final class WebViewViewController: UIViewController {
+    
+    //MARK: - Properties
+    weak var delegate: WebViewViewControllerDelegate?
+    private var estimatedProgressObservation: NSKeyValueObservation?
+    
+    //MARK: - Outlets
     @IBOutlet private var webView: WKWebView!
     @IBOutlet private var progressView: UIProgressView!
     
-    weak var delegate: WebViewViewControllerDelegate?
-    
+    //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         webView.navigationDelegate = self
-        
         view.backgroundColor = .white
-        
         loadAuthView()
-        updateProgress()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        webView.addObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            options: .new,
-            context: nil)
-        updateProgress()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        webView.removeObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            context: nil)
-    }
-    
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(
-                forKeyPath: keyPath,
-                of: object,
-                change: change,
-                context: context)
-        }
+        
+        setNeedsStatusBarAppearanceUpdate()
+        estimatedProgressObservation = webView.observe(\
+            .estimatedProgress,
+            options: [],
+            changeHandler: { [weak self] _, _ in
+            guard let self else { return }
+            self.updateProgress()})
     }
     
     private func updateProgress() {
@@ -72,7 +45,7 @@ final class WebViewViewController: UIViewController {
     }
     
     private func loadAuthView() {
-        guard var urlComponents = URLComponents(string: unsplashAuthorizeURLString) else {
+        guard var urlComponents = URLComponents(string: Constants.unsplashAuthorizeURLString) else {
             print("Error: Unable to create URLComponents for authorization.")
             return
         }
@@ -94,14 +67,15 @@ final class WebViewViewController: UIViewController {
         let request = URLRequest(url: url)
         webView.load(request)
         
-        updateProgress()
-    }
-    
-    @IBAction private func didTapBackButton(_ sender: Any?) {
-        delegate?.webViewViewControllerDidCancel(WebViewViewController())
     }
 }
+/*
+ @IBAction private func didTapBackButton(_ sender: Any?) {
+ delegate?.webViewViewControllerDidCancel(WebViewViewController())
+ }
+ */
 
+//MARK: - Extensions
 extension WebViewViewController: WKNavigationDelegate {
     func webView(
         _ webView: WKWebView,
@@ -109,22 +83,21 @@ extension WebViewViewController: WKNavigationDelegate {
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
+            decisionHandler(.cancel)
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             print("DEBUG:", "WebViewViewController Delegate called with code: \(code)")
-            decisionHandler(.cancel)
         } else {
-            print("Error: No code found in URL.")
             decisionHandler(.allow)
+            print("Error: No code found in URL.")
         }
     }
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
-        if
-            let url = navigationAction.request.url,
-            let urlComponents = URLComponents(string: url.absoluteString),
-            urlComponents.path == "/oauth/authorize/native",
-            let items = urlComponents.queryItems,
-            let codeItem = items.first(where: { $0.name == "code" })
+        if let url = navigationAction.request.url,
+           let urlComponents = URLComponents(string: url.absoluteString),
+           urlComponents.path == Constants.path,
+           let items = urlComponents.queryItems,
+           let codeItem = items.first(where: { $0.name == Constants.code })
         {
             return codeItem.value
         } else {
