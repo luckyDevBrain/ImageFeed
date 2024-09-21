@@ -7,70 +7,113 @@
 
 import UIKit
 
-//MARK: - Enum
-enum DecoderError: Error, LocalizedError {
-    case decodingError(Error)
-    
-    var errorDescription: String? {
-        switch self {
-        case .decodingError(let error):
-            return "Decoding error - \(error)"
-        }
-    }
-}
-
-//MARK: - OAuthTokenResponseBody
-struct OAuthTokenResponseBody: Decodable {
-    let accessToken: String
-    let tokenType: String
-    let scope: String
-    let createdAt: Int
-}
-
 final class OAuth2Service {
     
-    //MARK: - Singletone
+    // MARK: - Enum + Struct
+    
+    private enum JSONError: Error {
+        case decodingError
+    }
+    
+    private enum AuthServiceError: Error {
+        case invalidRequest
+    }
+    
+    struct OAuthTokenResponseBody: Decodable {
+        let accessToken: String
+        let tokenType: String
+        
+        private enum CodingKeys: String, CodingKey {
+            case accessToken = "access_token"
+            case tokenType = "token_type"
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            accessToken = try container.decode(String.self, forKey: .accessToken)
+            tokenType = try container.decode(String.self, forKey: .tokenType)
+        }
+    }
+    
+    // MARK: - Singletone
+    
     static let shared = OAuth2Service()
+    
+    // MARK: - Properties
+    
+    private let tokenStorage = OAuth2TokenStorage()
+    let urlSession = URLSession.shared
+    private var lastCode: String?
+    private var task: URLSessionTask?
+    
     private init() {}
     
-    //MARK: - Properties
-    let urlSession = URLSession.shared
-    private var task: URLSessionTask?
-    private var lastCode: String?
+    private(set) var authToken: String? {
+        get {
+            return tokenStorage.token
+        }
+        set {
+            tokenStorage.token = newValue
+        }
+    }
     
-    //MARK: - Methods
-    func fetchOAuthToken(with code: String, completion: @escaping (_ result: Result<String, Error>) -> Void) {
-        guard Thread.isMainThread else {
-            DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                self.fetchOAuthToken(with: code, completion: completion)
-            }
-            return
+    // MARK: - Public Methods
+    
+    func makeOAuthTokenRequest(code: String) -> URLRequest? {
+        let baseURL = URL(string: "https://unsplash.com")
+        guard let url = URL(
+            string: "/oauth/token"
+            + "?client_id=\(Constants.accessKey)"
+            + "&&client_secret=\(Constants.secretKey)"
+            + "&&redirect_uri=\(Constants.redirectURI)"
+            + "&&code=\(code)"
+            + "&&grant_type=authorization_code",
+            relativeTo: baseURL
+        ) else {
+            return nil
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethods.post
+        return request
+    }
+    
+    func fetchOAuthToken(_ code: String, handler: @escaping (Result<String, Error>) -> Void) {
+        assert(Thread.isMainThread)
         guard lastCode != code else {
-            completion(.failure(AuthServiceError.invalidRequest))
-            print("Error: Unable to create token request.")
+            handler(.failure(AuthServiceError.invalidRequest))
             return
         }
+        
         task?.cancel()
         lastCode = code
         
         guard let request = makeOAuthTokenRequest(code: code) else {
-            completion(.failure(AuthServiceError.invalidRequest))
-            print("Error: Unable to create token request.")
-            return }
+            handler(.failure(AuthServiceError.invalidRequest))
+            return
+        }
         
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
             DispatchQueue.main.async {
-                guard let self = self else { return }
+                guard let self else { return }
+                
                 switch result {
-                case .success(let responseBody):
-                    let token = responseBody.accessToken
-                    completion(.success(token))
-                    print("OAuth token decoded successfully")
+                case .success(let tokenResponse):
+                    self.tokenStorage.token = tokenResponse.accessToken
+                    handler(.success(tokenResponse.accessToken))
                 case .failure(let error):
-                    completion(.failure(error))
-                    print("Couldn't decode OAuth token")
+                    if let networkError = error as? NetworkError {
+                        switch networkError {
+                        case .httpStatusCode(let statusCode):
+                            print("HTTP status code error: \(statusCode)")
+                        case .urlRequestError(let requestError):
+                            print("URL request error: \(requestError)")
+                        case .urlSessionError:
+                            print("URL session error: \(error)")
+                        }
+                    } else {
+                        print("Other network error: \(error)")
+                    }
+                    handler(.failure(error))
                 }
                 self.task = nil
                 self.lastCode = nil
@@ -78,23 +121,6 @@ final class OAuth2Service {
         }
         self.task = task
         task.resume()
+        self.lastCode = nil
     }
-}
-
-private func makeOAuthTokenRequest(code: String) -> URLRequest? {
-    var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")
-      urlComponents?.queryItems = [
-          URLQueryItem(name: "client_id", value: Constants.accessKey),
-          URLQueryItem(name: "client_secret", value: Constants.secretKey),
-          URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-          URLQueryItem(name: "code", value: code),
-          URLQueryItem(name: "grant_type", value: "authorization_code")
-      ]
-      guard let url = urlComponents?.url else {
-          return nil
-    }
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    print("Token request: \(request)")
-    return request
 }

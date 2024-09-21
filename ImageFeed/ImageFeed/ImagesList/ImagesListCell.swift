@@ -9,26 +9,22 @@ import UIKit
 
 final class ImagesListCell: UITableViewCell {
     
-    //MARK: - Properties
+    // MARK: - Properties
     
     static let reuseIdentifier = "ImagesListCell"
+    private let gradientLayer = CAGradientLayer()
     
-    //MARK: - Outlets
+    // MARK: - Outlets
+    
     @IBOutlet var cellImage: UIImageView!
     @IBOutlet var likeButton: UIButton!
     @IBOutlet var dateLabel: UILabel!
     
-    private let gradientLayer = CAGradientLayer()
+    // MARK: - Lifecycle
     
     override func awakeFromNib() {
         super.awakeFromNib()
         setupGradient()
-    }
-    
-    private func setupGradient() {
-        gradientLayer.colors = [UIColor.black.withAlphaComponent(0.7).cgColor, UIColor.clear.cgColor]
-        gradientLayer.locations = [0.0, 1.0]
-        cellImage.layer.addSublayer(gradientLayer)
     }
     
     override func layoutSubviews() {
@@ -38,5 +34,21 @@ final class ImagesListCell: UITableViewCell {
         let dateLabelFrame = cellImage.convert(dateLabel.frame, from: dateLabel.superview)
         let gradientHeight = cellImage.bounds.height - dateLabelFrame.minY
         gradientLayer.frame = CGRect(x: 0, y: dateLabelFrame.minY, width: cellImage.bounds.width, height: gradientHeight)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setupGradient() {
+        gradientLayer.colors = [UIColor.black.withAlphaComponent(0.7).cgColor, UIColor.clear.cgColor]
+        gradientLayer.locations = [0.0, 1.0]
+        cellImage.layer.addSublayer(gradientLayer)
+    }
+    
+    // MARK: - Public Methods
+    
+    func configure(cell: ImagesListCell, image: UIImage, text: String, likeImageName: String) {
+        cell.cellImage.image = image
+        cell.dateLabel.text = text
+        cell.likeButton.setImage(UIImage(named: likeImageName), for: .normal)
     }
 }

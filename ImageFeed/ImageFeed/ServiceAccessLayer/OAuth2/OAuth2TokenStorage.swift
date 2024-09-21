@@ -8,38 +8,26 @@
 import Foundation
 import SwiftKeychainWrapper
 
-
 final class OAuth2TokenStorage {
+    private let tokenKey = "BearerToken"
     
-    //MARK: - Singletone
-    
-    static let shared = OAuth2TokenStorage()
-    private init() {}
-    
-    //MARK: - Properties
-
-    private let storage = KeychainWrapper.standard
-    enum StorageKeys: String {
-        case token
+    init() {
+        KeychainWrapper.standard.removeObject(forKey: tokenKey)
     }
-
+    
     var token: String? {
         get {
-            storage.string(forKey: StorageKeys.token.rawValue)
+            return KeychainWrapper.standard.string(forKey: tokenKey)
         }
         set {
-            guard let newValue else {
-                return
+            if let token = newValue {
+                let isSuccess = KeychainWrapper.standard.set(token, forKey: tokenKey)
+                guard isSuccess else {
+                    return
+                }
+            } else {
+                KeychainWrapper.standard.removeObject(forKey: tokenKey)
             }
-            storage.set(newValue, forKey: StorageKeys.token.rawValue)
         }
     }
 }
-
-//MARK: - Extension
-extension OAuth2TokenStorage {
-    func cleanToken() {
-        storage.removeObject(forKey: StorageKeys.token.rawValue)
-    }
-}
-    

@@ -5,66 +5,48 @@
 //  Created by Kirill on 14.08.2024.
 //
 
+import Foundation
 import UIKit
-import SwiftKeychainWrapper
-
-protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate(_ vc: AuthViewController)
-}
 
 final class SplashViewController: UIViewController {
     
-    //MARK: - Singletone
-    private let oAuth2TokenStorage = OAuth2TokenStorage.shared
-    private let oAuth2Service = OAuth2Service.shared
-    private let profileImageService = ProfileImageService.shared
+    // MARK: - Singletone
+    
+    let oauth2Service = OAuth2Service.shared
     private let profileService = ProfileService.shared
+    let profileImageService = ProfileImageService.shared
     
     // MARK: - Properties
     
-    private var logoImageView: UIImageView?
+    private let storage = OAuth2TokenStorage()
     
     // MARK: - Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        addLogoImageView()
-        view.backgroundColor = .ypBlack
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        setNeedsStatusBarAppearanceUpdate()
-    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let token = oAuth2TokenStorage.token {
+        if let token = storage.token {
             fetchProfile(token)
         } else {
-            showAuthViewController()
+            print("[SplashViewController: viewDidAppear]: ERROR: the tokeen was not found")
         }
+        setUpSplashScreen()
+        showAuthViewController()
     }
     
-    // MARK: - Private Methods
-    private func addLogoImageView() {
-        let logoImageView = UIImage(named: "splash_screen_logo")
-        let imageView = UIImageView(image: logoImageView)
-        imageView.tintColor = .gray
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(imageView)
-        imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        self.logoImageView = imageView
+    // MARK: - Navigation
+    
+    private func switchToTabBarController() {
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+        window.rootViewController = TabBarController()
     }
     
     private func showAuthViewController() {
-        let authViewController = UIStoryboard(name: "Main",
-                                              bundle: .main
-        ).instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
-        guard let authViewController else { return }
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
+            print("[SplashViewController: showAuthViewController]: ERROR: with AuthViewController")
+            return
+        }
         authViewController.delegate = self
         
         let navigationController = UINavigationController(rootViewController: authViewController)
@@ -72,46 +54,49 @@ final class SplashViewController: UIViewController {
         present(navigationController, animated: true, completion: nil)
     }
     
-    private func showTabBarController() {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first
-        else {
-            assertionFailure("Invalid Configuration")
-            return }
-        
-        window.rootViewController = UIStoryboard(name: "Main",
-                                                 bundle: .main
-        ).instantiateViewController(withIdentifier: "TabBarViewController")
-    }
-}
-
-// MARK: - Extensions
-extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate(_ vc: AuthViewController) {
-        vc.dismiss(animated: true)
-        
-        guard let token = oAuth2TokenStorage.token else {
-            print("token error ")
-            return
-        }
-        fetchProfile(token)
+    // MARK: - Private Methods
+    
+    private func setUpSplashScreen() {
+        let splashImageView = UIImageView()
+        splashImageView.translatesAutoresizingMaskIntoConstraints = false
+        splashImageView.image = UIImage.splashScreenLogo
+        splashImageView.backgroundColor = UIColor.ypBlack
+        view.addSubview(splashImageView)
+        splashImageView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        splashImageView.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        splashImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        splashImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
     
     private func fetchProfile(_ token: String) {
         UIBlockingProgressHUD.show()
-        profileService.fetchProfile(token) { [weak self] result in
+        
+        profileService.fetchProfile(token) { result in
             UIBlockingProgressHUD.dismiss()
-            
-            guard let self else { return }
             
             switch result {
             case .success(let profile):
-                self.profileImageService.fetchProfileImageURL(token: token, username: profile.username) { _ in }
-                self.showTabBarController()
-            case .failure:
-                print("Load profile error")
+                self.profileImageService.fetchProfileImageURL(username: profile.username) {_ in }
+                self.switchToTabBarController()
+                print("[SplashViewController: fetchProfile]: Profile fetched successfully")
+            case .failure(let error):
+                print("[SplashViewController: fetchProfile]: Failed to fetch profile: \(error)")
                 break
             }
         }
+    }
+}
+
+    // MARK: - Extension
+
+extension SplashViewController: AuthViewControllerDelegate {
+    func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
+        vc.dismiss(animated: true)
+        
+        guard let token = storage.token else {
+            return
+        }
+        
+        fetchProfile(token)
     }
 }

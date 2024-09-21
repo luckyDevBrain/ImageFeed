@@ -10,9 +10,9 @@ import ProgressHUD
 
 final class UIBlockingProgressHUD {
     private static var window: UIWindow? {
-            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-            return windowScene?.windows.first
-        }
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        return windowScene?.windows.first
+    }
     
     static func show() {
         window?.isUserInteractionEnabled = false
