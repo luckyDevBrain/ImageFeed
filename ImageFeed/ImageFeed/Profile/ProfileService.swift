@@ -7,7 +7,7 @@
 
 import Foundation
 
-    // MARK: - Struct + Enum
+// MARK: - Struct + Enum
 
 enum ProfileServiceError: Error {
     case invalidRequest
@@ -21,7 +21,7 @@ private enum JSONError: Error {
     case decodingError
 }
 
-struct ProfileResult: Codable {
+private struct ProfileResult: Codable {
     var username: String
     var firstName: String
     var lastName: String?
@@ -57,7 +57,7 @@ struct Profile {
 
 final class ProfileService {
     
-    // MARK: - Singletone
+    // MARK: - Singleton
     
     static let shared = ProfileService()
     private init() {}

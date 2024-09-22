@@ -7,25 +7,25 @@
 
 import Foundation
 
-    // MARK: Struct + Enum
-
-struct ProfileImage: Decodable {
-    let small: String
-    let medium: String
-    let large: String
-}
-
-struct UserResult: Decodable {
-    let profileImage: ProfileImage
-    
-    enum CodingKeys: String, CodingKey {
-        case profileImage = "profile_image"
-    }
-}
-
 final class ProfileImageService {
     
-    // MARK: - Singletone
+    // MARK: Struct + Enum
+    
+    private struct ProfileImage: Decodable {
+        let small: String
+        let medium: String
+        let large: String
+    }
+    
+    private struct UserResult: Decodable {
+        let profileImage: ProfileImage
+        
+        enum CodingKeys: String, CodingKey {
+            case profileImage = "profile_image"
+        }
+    }
+    
+    // MARK: - Singleton
     
     static let shared = ProfileImageService()
     private init() {}

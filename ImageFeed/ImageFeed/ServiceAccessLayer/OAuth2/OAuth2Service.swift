@@ -35,7 +35,7 @@ final class OAuth2Service {
         }
     }
     
-    // MARK: - Singletone
+    // MARK: - Singleton
     
     static let shared = OAuth2Service()
     

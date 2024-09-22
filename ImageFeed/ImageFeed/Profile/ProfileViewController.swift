@@ -10,7 +10,7 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
-    // MARK: - Singletone
+    // MARK: - Singleton
     
     private let profileService = ProfileService.shared
     
@@ -87,7 +87,7 @@ final class ProfileViewController: UIViewController {
         avatarImageView.kf.setImage(with: url)
     }
     
-    private func updateLableText() {
+    func updateLableText() {
         if let profile = profileService.profile {
             nameLabel.text = profile.name
             loginNameLabel.text = profile.loginName
@@ -165,21 +165,5 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapLogoutButton() {
-        //performLogout()
     }
 }
-/*
- private func performLogout() {
- tokenStorage.token = nil
- KeychainWrapper.standard.removeObject(forKey: "Bearer Token")
- switchToLoginScreen()
- }
- 
- private func switchToLoginScreen() {
- guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
- let loginViewController = UIStoryboard(name: "Main", bundle: .main)
- .instantiateViewController(withIdentifier: "SplashViewController")
- window.rootViewController = loginViewController
- }
- }
- */

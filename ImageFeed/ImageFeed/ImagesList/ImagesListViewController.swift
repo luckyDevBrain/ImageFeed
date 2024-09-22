@@ -57,7 +57,7 @@ final class ImagesListViewController: UIViewController {
     }
 }
 
-    // MARK: - Extension
+// MARK: - Extension
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {

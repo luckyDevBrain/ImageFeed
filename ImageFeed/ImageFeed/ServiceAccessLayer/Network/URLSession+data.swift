@@ -7,7 +7,7 @@
 
 import UIKit
 
-    // MARK: - Enum
+// MARK: - Enum
 
 enum NetworkError: Error {
     case httpStatusCode(Int)
@@ -20,7 +20,7 @@ enum FetchOAuthTokenError: Error {
     case decodingError
 }
 
-    // MARK: - Extension
+// MARK: - Extension
 
 extension URLSession {
     func data(

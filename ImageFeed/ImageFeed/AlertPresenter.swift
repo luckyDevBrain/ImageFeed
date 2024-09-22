@@ -21,17 +21,17 @@ final class AlertPresenter: UIAlertController, AlertPresenterProtocol {
             message: result.message,
             preferredStyle: .alert)
         
-        let action = UIAlertAction(title: result.button, style: .default) { _ in
-            result.completion()
+        let firstAction = UIAlertAction(title: result.firstActionButton, style: .default) { _ in
+            result.firstActionCompletion()
         }
         
-        alert.addAction(action)
+        alert.addAction(firstAction)
         
-        if let secondButton = result.secondButton,
-           let secondCompletion = result.secondCompletion {
-            let secondAction = UIAlertAction(title: secondButton,
+        if let secondActionButton = result.secondActionButton,
+           let secondActionCompletion = result.secondActionCompletion {
+            let secondAction = UIAlertAction(title: secondActionButton,
                                              style: .default) { _ in
-                secondCompletion()
+                secondActionCompletion()
             }
             alert.addAction(secondAction)
         }

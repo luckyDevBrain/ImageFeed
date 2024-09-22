@@ -10,7 +10,7 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     
-    // MARK: - Singletone
+    // MARK: - Singleton
     
     let oauth2Service = OAuth2Service.shared
     private let profileService = ProfileService.shared
@@ -87,7 +87,7 @@ final class SplashViewController: UIViewController {
     }
 }
 
-    // MARK: - Extension
+// MARK: - Extension
 
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String) {

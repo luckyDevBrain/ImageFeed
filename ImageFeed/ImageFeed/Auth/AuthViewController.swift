@@ -8,7 +8,7 @@
 import UIKit
 import ProgressHUD
 
-    // MARK: - Protocol
+// MARK: - Protocol
 
 protocol AuthViewControllerDelegate: AnyObject {
     func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String)
@@ -16,7 +16,7 @@ protocol AuthViewControllerDelegate: AnyObject {
 
 final class AuthViewController: UIViewController {
     
-    // MARK: - Singletone
+    // MARK: - Singleton
     
     let oauth2Service = OAuth2Service.shared
     
@@ -54,7 +54,7 @@ final class AuthViewController: UIViewController {
     }
 }
 
-    // MARK: - Extension
+// MARK: - Extension
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {

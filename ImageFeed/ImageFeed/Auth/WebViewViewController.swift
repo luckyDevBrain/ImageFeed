@@ -10,7 +10,7 @@ import UIKit
 
 fileprivate let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
 
-    // MARK: - Protocol
+// MARK: - Protocol
 
 protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
@@ -76,7 +76,7 @@ final class WebViewViewController: UIViewController {
     }
 }
 
-    // MARK: - Extension
+// MARK: - Extension
 
 extension WebViewViewController: WKNavigationDelegate {
     func webView(
