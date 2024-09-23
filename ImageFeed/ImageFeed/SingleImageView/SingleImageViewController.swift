@@ -9,6 +9,8 @@ import UIKit
 
 final class SingleImageViewController: UIViewController {
     
+    // MARK: - Properties
+    
     var image: UIImage? {
         didSet {
             guard isViewLoaded, let image else { return }
@@ -43,6 +45,12 @@ final class SingleImageViewController: UIViewController {
         return button
     }()
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -60,14 +68,12 @@ final class SingleImageViewController: UIViewController {
         rescaleAndCenterImageInScrollView(image: image)
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         rescaleAndCenterImageInScrollView(image: imageView.image ?? UIImage())
     }
+    
+    // MARK: - Private Methods
     
     private func setupConstraints() {
         [scrollView, imageView, shareButton, backButton].forEach {
@@ -100,19 +106,6 @@ final class SingleImageViewController: UIViewController {
         ])
     }
     
-    @objc private func didTapBackButton() {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    @objc private func didTapShareButton(_ sender: UIButton) {
-        guard let image  else { return }
-        let share = UIActivityViewController(
-            activityItems: [image],
-            applicationActivities: nil
-        )
-        present(share, animated: true, completion: nil)
-    }
-    
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale = scrollView.minimumZoomScale
         let maxZoomScale = scrollView.maximumZoomScale
@@ -129,7 +122,24 @@ final class SingleImageViewController: UIViewController {
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
+    
+    // MARK: - Actions
+    
+    @objc private func didTapBackButton() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func didTapShareButton(_ sender: UIButton) {
+        guard let image  else { return }
+        let share = UIActivityViewController(
+            activityItems: [image],
+            applicationActivities: nil
+        )
+        present(share, animated: true, completion: nil)
+    }
 }
+
+// MARK: - Extension
 
 extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {

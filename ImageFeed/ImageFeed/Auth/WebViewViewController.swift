@@ -6,9 +6,11 @@
 //
 
 import UIKit
-import WebKit
+@preconcurrency import WebKit
 
 fileprivate let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+
+// MARK: - Protocol
 
 protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
@@ -16,55 +18,35 @@ protocol WebViewViewControllerDelegate: AnyObject {
 }
 
 final class WebViewViewController: UIViewController {
-    @IBOutlet private var webView: WKWebView!
-    @IBOutlet private var progressView: UIProgressView!
+    
+    // MARK: - Properties
     
     weak var delegate: WebViewViewControllerDelegate?
+    private var estimatedProgressObservation: NSKeyValueObservation?
+    
+    // MARK: - Outlets
+    
+    @IBOutlet private var webView: WKWebView!
+    @IBOutlet weak var progressView: UIProgressView!
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         webView.navigationDelegate = self
         
-        view.backgroundColor = .white
-        
         loadAuthView()
-        updateProgress()
+        
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.updateProgress()
+             })
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        webView.addObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            options: .new,
-            context: nil)
-        updateProgress()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        webView.removeObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            context: nil)
-    }
-    
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(
-                forKeyPath: keyPath,
-                of: object,
-                change: change,
-                context: context)
-        }
-    }
+    // MARK: - Private Methods
     
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
@@ -73,7 +55,7 @@ final class WebViewViewController: UIViewController {
     
     private func loadAuthView() {
         guard var urlComponents = URLComponents(string: unsplashAuthorizeURLString) else {
-            print("Error: Unable to create URLComponents for authorization.")
+            print("[WebViewViewController: loadAuthView]: Error: Unable to create URLComponents for authorization")
             return
         }
         
@@ -85,22 +67,16 @@ final class WebViewViewController: UIViewController {
         ]
         
         guard let url = urlComponents.url else {
-            print("Error: Unable to create URL from URLComponents. Components: \(urlComponents)")
+            print("[WebViewViewController: loadAuthView]: Error: Unable to create URL from URLComponents. Components: \(urlComponents)")
             return
         }
         
-        print("Loading URL:", url.absoluteString)
-        
         let request = URLRequest(url: url)
         webView.load(request)
-        
-        updateProgress()
-    }
-    
-    @IBAction private func didTapBackButton(_ sender: Any?) {
-        delegate?.webViewViewControllerDidCancel(WebViewViewController())
     }
 }
+
+// MARK: - Extension
 
 extension WebViewViewController: WKNavigationDelegate {
     func webView(
@@ -110,10 +86,9 @@ extension WebViewViewController: WKNavigationDelegate {
     ) {
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
-            print("DEBUG:", "WebViewViewController Delegate called with code: \(code)")
+            print("[WebViewViewController: webView]: DEBUG:", "WebViewViewController Delegate called with code: \(code)")
             decisionHandler(.cancel)
         } else {
-            print("Error: No code found in URL.")
             decisionHandler(.allow)
         }
     }
@@ -128,7 +103,6 @@ extension WebViewViewController: WKNavigationDelegate {
         {
             return codeItem.value
         } else {
-            print("Error: Unable to extract code from URL: \(String(describing: navigationAction.request.url))")
             return nil
         }
     }

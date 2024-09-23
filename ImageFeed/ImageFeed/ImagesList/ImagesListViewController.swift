@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ImagesListViewController.swift
 //  ImageFeed
 //
 //  Created by Kirill on 18.07.2024.
@@ -8,10 +8,11 @@
 import UIKit
 
 final class ImagesListViewController: UIViewController {
+    
+    // MARK: - Properties
+    
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
-    
-    @IBOutlet private var tableView: UITableView!
-    
+    private let imagesListCell = ImagesListCell()
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
     
     private lazy var dateFormatter: DateFormatter = {
@@ -22,26 +23,21 @@ final class ImagesListViewController: UIViewController {
         return formatter
     }()
     
+    // MARK: - Outlets
+    
+    @IBOutlet private var tableView: UITableView!
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        
-        // Настройка делегата и источника данных для таблицы
         tableView.delegate = self
         tableView.dataSource = self
         
-        // Изменение цвета фона таблицы
-        tableView.backgroundColor = UIColor(hex: "#1A1B22")
-        
-        // Удаление разделителей между ячейками
-        tableView.separatorStyle = .none
-        
+        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showSingleImageSegueIdentifier {
@@ -49,9 +45,10 @@ final class ImagesListViewController: UIViewController {
                 let viewController = segue.destination as? SingleImageViewController,
                 let indexPath = sender as? IndexPath
             else {
-                assertionFailure("Invalid segue destination")
+                assertionFailure("[ImagesListViewController: prepare]: Invalid segue destination")
                 return
             }
+            
             let image = UIImage(named: photosName[indexPath.row])
             viewController.image = image
         } else {
@@ -60,9 +57,23 @@ final class ImagesListViewController: UIViewController {
     }
 }
 
+// MARK: - Extension
+
+extension ImagesListViewController {
+    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+        guard let image = UIImage(named: photosName[indexPath.row]) else {
+            return
+        }
+        
+        let imageName = indexPath.row % 2 == 0 ? "like_button_on" : "like_button_off"
+        
+        imagesListCell.configure(cell: cell, image: image, text: dateFormatter.string(from: Date()), likeImageName: imageName)
+    }
+}
+
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        photosName.count
+        return photosName.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -73,24 +84,8 @@ extension ImagesListViewController: UITableViewDataSource {
         }
         
         configCell(for: imageListCell, with: indexPath)
+        
         return imageListCell
-    }
-}
-
-extension ImagesListViewController {
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        guard let image = UIImage(named: photosName[indexPath.row]) else {
-            return
-        }
-        
-        cell.cellImage.image = image
-        cell.dateLabel.text = dateFormatter.string(from: Date())
-        
-        let isLiked = indexPath.row % 2 == 0
-        let likeImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
-        cell.likeButton.setImage(likeImage, for: .normal)
-        
-        cell.selectionStyle = .none
     }
 }
 
