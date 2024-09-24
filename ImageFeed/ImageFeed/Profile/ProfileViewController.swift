@@ -13,6 +13,7 @@ final class ProfileViewController: UIViewController {
     // MARK: - Singleton
     
     private let profileService = ProfileService.shared
+    private let profileLogoutService = ProfileLogoutService.shared
     
     // MARK: - Properties
     
@@ -165,5 +166,18 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapLogoutButton() {
+    }
+    
+    func showLogoutAlert(vc: ProfileViewController) {
+        let alertModel = AlertModel(
+            title: "Пока, пока!",
+            message: "Уверенные что хотите выйти?",
+            buttons: [.yesButton, .noButton],
+            identifier: "Logout",
+            completion: {
+                self.profileLogoutService.logout()
+            }
+        )
+        AlertPresenter.showAlert(on: vc, model: alertModel)
     }
 }

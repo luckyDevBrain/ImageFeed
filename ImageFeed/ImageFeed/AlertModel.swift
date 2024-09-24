@@ -7,11 +7,26 @@
 
 import Foundation
 
+enum AlertButton: String {
+    case okButton = "OK"
+    case yesButton = "Да"
+    case noButton = "Нет"
+    case cancelButton = "Не надо"
+    case retryButton = "Повторить"
+    
+    var accessibilityIdentifier: String {
+        return self.rawValue
+    }
+    
+    var title: String {
+        return self.rawValue
+    }
+}
+
 struct AlertModel {
     let title: String
     let message: String
-    let firstActionButton: String
-    let firstActionCompletion: (() -> Void)
-    let secondActionButton: String?
-    let secondActionCompletion: (() -> Void)?
+    let buttons: [AlertButton]
+    let identifier: String
+    let completion: () -> Void
 }

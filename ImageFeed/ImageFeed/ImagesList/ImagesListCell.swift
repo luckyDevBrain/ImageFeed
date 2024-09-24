@@ -6,6 +6,13 @@
 //
 
 import UIKit
+import Kingfisher
+
+    // MARK: - Protocol
+
+protocol ImagesListCellDelegate: AnyObject {
+    func imageListCellDidTapLike(_ cell: ImagesListCell)
+}
 
 final class ImagesListCell: UITableViewCell {
     
@@ -13,6 +20,8 @@ final class ImagesListCell: UITableViewCell {
     
     static let reuseIdentifier = "ImagesListCell"
     private let gradientLayer = CAGradientLayer()
+    weak var delegate: ImagesListCellDelegate?
+
     
     // MARK: - Outlets
     
@@ -46,9 +55,27 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Public Methods
     
-    func configure(cell: ImagesListCell, image: UIImage, text: String, likeImageName: String) {
-        cell.cellImage.image = image
-        cell.dateLabel.text = text
-        cell.likeButton.setImage(UIImage(named: likeImageName), for: .normal)
-    }
+    func configure(image: UIImage, text: String, isLiked: Bool) {
+            let LikeButtonImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
+
+            cellImage.image = image
+            dateLabel.text = text
+            likeButton.setImage(LikeButtonImage, for: .normal)
+        }
+        
+        func setIsLiked(_ isLiked: Bool) {
+            let LikeButtonImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
+
+            self.likeButton.setImage(LikeButtonImage, for: .normal)
+            }
+        
+        override func prepareForReuse() {
+            super.prepareForReuse()
+            cellImage.kf.cancelDownloadTask()
+            cellImage.image = nil
+            dateLabel.text = nil
+        }
+        @IBAction func likeButtonClicked(_ sender: Any) {
+            delegate?.imageListCellDidTapLike(self)
+        }
 }

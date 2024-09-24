@@ -7,35 +7,49 @@
 
 import UIKit
 
-protocol AlertPresenterProtocol {
-    func showAlert(result: AlertModel)
-}
-
-final class AlertPresenter: UIAlertController, AlertPresenterProtocol {
+struct AlertPresenter {
     
-    weak var delegate: UIViewController?
+    static func showAlert(on vc: UIViewController, model: AlertModel) {
+        showBasicAlert(on: vc,
+                       title: model.title,
+                       message: model.message,
+                       buttons: model.buttons,
+                       identifier: model.identifier,
+                       completion: model.completion)
+    }
     
-    func showAlert(result: AlertModel) {
-        let alert = UIAlertController(
-            title: result.title,
-            message: result.message,
-            preferredStyle: .alert)
+    private static func showBasicAlert(on vc: UIViewController,
+                                       title: String,
+                                       message: String,
+                                       buttons: [AlertButton],
+                                       identifier: String,
+                                       completion: @escaping () -> ()) {
         
-        let firstAction = UIAlertAction(title: result.firstActionButton, style: .default) { _ in
-            result.firstActionCompletion()
-        }
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
         
-        alert.addAction(firstAction)
+        alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemBackground
         
-        if let secondActionButton = result.secondActionButton,
-           let secondActionCompletion = result.secondActionCompletion {
-            let secondAction = UIAlertAction(title: secondActionButton,
-                                             style: .default) { _ in
-                secondActionCompletion()
+        alert.view.accessibilityIdentifier = identifier
+        
+        for button in buttons {
+            switch button {
+            case .cancelButton, .noButton:
+                let action = UIAlertAction(title: button.title, style: .cancel, handler: nil)
+                action.accessibilityIdentifier = button.accessibilityIdentifier
+                alert.addAction(action)
+            default:
+                let action = UIAlertAction(title: button.title, style: .default) { _ in
+                    completion()
+                }
+                action.accessibilityIdentifier = button.accessibilityIdentifier
+                alert.addAction(action)
             }
-            alert.addAction(secondAction)
         }
         
-        delegate?.present(alert, animated: true)
+        DispatchQueue.main.async {
+            vc.present(alert, animated: true)
+        }
     }
 }

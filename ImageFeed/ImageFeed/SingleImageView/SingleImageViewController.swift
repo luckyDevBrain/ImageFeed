@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     
@@ -19,6 +20,8 @@ final class SingleImageViewController: UIViewController {
             rescaleAndCenterImageInScrollView(image: image)
         }
     }
+    
+    var largeImageURL: URL?
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -144,5 +147,45 @@ final class SingleImageViewController: UIViewController {
 extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         imageView
+    }
+}
+
+// MARK: - Private Extension
+
+private extension SingleImageViewController {
+    func loadImage() {
+        guard let largeImageURL = largeImageURL else { return }
+        let kf = KingfisherManager.shared
+        imageView.image = nil
+        UIBlockingProgressHUD.show()
+        kf.retrieveImage(with: largeImageURL) {result in
+            UIBlockingProgressHUD.dismiss()
+            
+            switch result {
+            case .success(let value):
+                self.image = value.image
+                print("Изображение успешно загружено: \(value.image)")
+            case .failure(let error):
+                print("Ошибка загрузки: \(error.localizedDescription)")
+                self.showError(vc: self)
+            }
+        }
+    }
+    
+    func showError(vc: SingleImageViewController) {
+        let alert = UIAlertController(
+            title: "Что-то пошло не так(",
+            message: "Попробовать ещё раз?",
+            preferredStyle: .alert)
+        
+        let cancelButton = UIAlertAction(title: "Не надо", style: .cancel, handler: nil)
+        let retryAction = UIAlertAction(title: "Повторить", style: .cancel) { _ in
+            self.loadImage()
+        }
+        
+        alert.addAction(cancelButton)
+        alert.addAction(retryAction)
+        
+        self.present(vc, animated: true, completion: nil)
     }
 }
