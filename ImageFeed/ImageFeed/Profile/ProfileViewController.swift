@@ -101,6 +101,7 @@ final class ProfileViewController: UIViewController {
     private func setup() {
         setupView()
         setupConstraints()
+        setupActions()
     }
     
     private func setupView() {
@@ -166,9 +167,10 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapLogoutButton() {
+        showLogoutAlert()
     }
     
-    func showLogoutAlert(vc: ProfileViewController) {
+    func showLogoutAlert() {
         let alertModel = AlertModel(
             title: "Пока, пока!",
             message: "Уверенные что хотите выйти?",
@@ -178,6 +180,6 @@ final class ProfileViewController: UIViewController {
                 self.profileLogoutService.logout()
             }
         )
-        AlertPresenter.showAlert(on: vc, model: alertModel)
+        AlertPresenter.showAlert(on: self, model: alertModel)
     }
 }

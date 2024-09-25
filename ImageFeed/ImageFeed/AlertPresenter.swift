@@ -36,7 +36,7 @@ struct AlertPresenter {
         for button in buttons {
             switch button {
             case .cancelButton, .noButton:
-                let action = UIAlertAction(title: button.title, style: .cancel, handler: nil)
+                let action = UIAlertAction(title: button.title, style: .default, handler: nil)
                 action.accessibilityIdentifier = button.accessibilityIdentifier
                 alert.addAction(action)
             default:
@@ -45,6 +45,7 @@ struct AlertPresenter {
                 }
                 action.accessibilityIdentifier = button.accessibilityIdentifier
                 alert.addAction(action)
+                alert.preferredAction = action
             }
         }
         
