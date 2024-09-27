@@ -9,18 +9,31 @@ import UIKit
 import ProgressHUD
 
 final class UIBlockingProgressHUD {
+
+    //MARK: - Properties
+    
     private static var window: UIWindow? {
-        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        return windowScene?.windows.first
+        var window: UIWindow?
+        DispatchQueue.main.async {
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+            window = windowScene?.windows.first
+        }
+        return window
     }
     
+    //MARK: - Methods
+    
     static func show() {
-        window?.isUserInteractionEnabled = false
-        ProgressHUD.animate()
+        DispatchQueue.main.async {
+            window?.isUserInteractionEnabled = false
+            ProgressHUD.animate()
+        }
     }
     
     static func dismiss() {
-        window?.isUserInteractionEnabled = true
-        ProgressHUD.dismiss()
+        DispatchQueue.main.async {
+            window?.isUserInteractionEnabled = true
+            ProgressHUD.dismiss()
+        }
     }
 }

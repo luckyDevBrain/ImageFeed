@@ -52,30 +52,37 @@ final class ImagesListCell: UITableViewCell {
         gradientLayer.locations = [0.0, 1.0]
         cellImage.layer.addSublayer(gradientLayer)
     }
-    
+
+    private func likeButtonImage(_ isLiked: Bool) -> UIImage {
+        isLiked ? UIImage.likeButtonOn : UIImage.likeButtonOff
+    }
+
     // MARK: - Public Methods
-    
-    func configure(image: UIImage, text: String, isLiked: Bool) {
-            let LikeButtonImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
+    func setImage(_ image: UIImage) {
+        cellImage.image = image
+    }
 
-            cellImage.image = image
-            dateLabel.text = text
-            likeButton.setImage(LikeButtonImage, for: .normal)
-        }
-        
-        func setIsLiked(_ isLiked: Bool) {
-            let LikeButtonImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
+    func setText(_ text: String) {
+        dateLabel.text = text
+    }
 
-            self.likeButton.setImage(LikeButtonImage, for: .normal)
-            }
+    func setIsLiked(_ isLiked: Bool) {
+        likeButton.setImage(likeButtonImage(isLiked), for: .normal)
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
+        cellImage.image = nil
+        dateLabel.text = nil
+        likeButton.setImage(nil, for: .normal)
         
-        override func prepareForReuse() {
-            super.prepareForReuse()
-            cellImage.kf.cancelDownloadTask()
-            cellImage.image = nil
-            dateLabel.text = nil
-        }
-        @IBAction func likeButtonClicked(_ sender: Any) {
-            delegate?.imageListCellDidTapLike(self)
-        }
+        // Сброс градиента
+        gradientLayer.removeFromSuperlayer()
+        setupGradient()
+    }
+
+    @IBAction func likeButtonClicked(_ sender: Any) {
+        delegate?.imageListCellDidTapLike(self)
+    }
 }

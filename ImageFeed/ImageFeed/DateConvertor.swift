@@ -1,5 +1,5 @@
 //
-//  DateFormatterAdd.swift
+//  DateConvertor.swift
 //  ImageFeed
 //
 //  Created by Kirill on 24.09.2024.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-final class DateFormatterAdd {
-    static let shared = DateFormatterAdd()
+final class DateConvertor {
+    static let shared = DateConvertor()
     private init() {}
     
     lazy var dateFormatter: DateFormatter = {

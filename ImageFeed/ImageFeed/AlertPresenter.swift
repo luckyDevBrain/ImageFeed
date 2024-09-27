@@ -49,8 +49,8 @@ struct AlertPresenter {
             }
         }
         
-        DispatchQueue.main.async {
-            vc.present(alert, animated: true)
+        DispatchQueue.main.async { [weak vc] in
+            vc?.present(alert, animated: true)
         }
     }
 }

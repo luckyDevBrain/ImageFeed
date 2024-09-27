@@ -48,10 +48,20 @@ final class ImagesListViewController: UIViewController {
     
     private func openSingleImageViewController(for indexPath: IndexPath) {
         let vc = SingleImageViewController()
-        guard let largeImageURL = URL(string: photos[indexPath.row].largeImageURL) else {
-            assertionFailure("[ImagesListViewController: prepare]: Invalid segue destination")
-            return
-        }
+        // Проверяем корректность URL для картинки
+            guard let largeImageURL = URL(string: photos[indexPath.row].largeImageURL) else {
+                // Если URL некорректен, показываем алерт с ошибкой
+                let alertModel = AlertModel(
+                    title: "Ошибка",
+                    message: "Не удалось загрузить изображение. Пожалуйста, попробуйте позже.",
+                    buttons: [.okButton],
+                    identifier: "imageLoadError"
+                ) {
+                    // Можно добавить логику по необходимости (например, перезагрузка страницы или другое действие)
+                }
+                AlertPresenter.showAlert(on: self, model: alertModel)
+                return
+            }
         vc.largeImageURL = largeImageURL
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
@@ -105,29 +115,27 @@ final class ImagesListViewController: UIViewController {
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         guard let photo = photos[safeIndex: indexPath.row] else { return }
+
+        let dateCreated = photo.createdAt ?? Date()
+        let dateCreatedString = dateFormatter.string(from: dateCreated)
+        cell.setText(dateCreatedString)
         
-        let imageURLString = photo.thumbImageURL
-        
+        // Установка состояния лайка
+        cell.setIsLiked(photo.isLiked)
+
         cell.cellImage.kf.indicatorType = .activity
         cell.cellImage.kf.setImage(
-            with: URL(string: imageURLString),
+            with: URL(string: photo.thumbImageURL),
             placeholder: UIImage(named: "stub"),
-            options: [.transition(.fade(1))]) { [weak self] result in
-                guard let self else { return }
-                
+            options: [.transition(.fade(1))]) { result in
+
                 switch result {
                 case .success(let value):
-                    cell.configure(image: value.image, text: dateFormatter.string(from: Date()), isLiked: photo.isLiked)
-                    
+                    cell.setImage(value.image)
                 case .failure(_):
                     guard let placeholder = UIImage(named: "stub") else {return}
-                    cell.configure(
-                        image: placeholder,
-                        text: dateFormatter.string(from: Date()),
-                        isLiked: photo.isLiked
-                    )
+                    cell.setImage(placeholder)
                 }
-                
             }
     }
 }
@@ -191,15 +199,14 @@ extension ImagesListViewController: ImagesListCellDelegate {
                     cell.setIsLiked(self.photos[indexPath.row].isLiked)
                     print("изменение лайка в imageListViewController")
                 }
-                UIBlockingProgressHUD.dismiss()
             case .failure(let error):
-                UIBlockingProgressHUD.dismiss()
                 print("DEBUG",
                       "[\(String(describing: self)).\(#function)]:",
                       error.localizedDescription,
                       separator: "\n")
                 // добавить алерт
             }
+            UIBlockingProgressHUD.dismiss()
         }
     }
 }

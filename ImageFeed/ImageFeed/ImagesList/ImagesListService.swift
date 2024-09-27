@@ -57,10 +57,10 @@ class ImagesListService {
         isFetching = true
         currentPage += 1
         
-        let completionOnMainTheard:(Error?) -> Void = { error in
-            DispatchQueue.main.async {
+        let completionOnMainThread:(Error?) -> Void = { error in
+            DispatchQueue.main.async { [weak self] in
                 completion(error)
-                self.isFetching = false
+                self?.isFetching = false
             }
         }
         
@@ -76,10 +76,10 @@ class ImagesListService {
                 switch result {
                 case .success(let photoResult):
                     self?.processServerResponse(photoResult: photoResult)
-                    completionOnMainTheard(nil)
+                    completionOnMainThread(nil)
                 case .failure:
                     self?.currentPage -= 1
-                    completionOnMainTheard(PhotosResponseError.defaultError)
+                    completionOnMainThread(PhotosResponseError.defaultError)
                 }
             }
         }

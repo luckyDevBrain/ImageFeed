@@ -12,7 +12,7 @@ final class SplashViewController: UIViewController {
     
     // MARK: - Singleton
     
-    let oauth2Service = OAuth2Service.shared
+    let oAuth2Service = OAuth2Service.shared
     private let profileService = ProfileService.shared
     let profileImageService = ProfileImageService.shared
     
@@ -28,7 +28,7 @@ final class SplashViewController: UIViewController {
         if let token = storage.token {
             fetchProfile(token)
         } else {
-            print("[SplashViewController: viewDidAppear]: ERROR: the tokeen was not found")
+            print("[SplashViewController: viewDidAppear]: ERROR: the token was not found")
         }
         setUpSplashScreen()
         showAuthViewController()
@@ -71,13 +71,13 @@ final class SplashViewController: UIViewController {
     private func fetchProfile(_ token: String) {
         UIBlockingProgressHUD.show()
         
-        profileService.fetchProfile(token) { result in
+        profileService.fetchProfile(token) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             
             switch result {
             case .success(let profile):
-                self.profileImageService.fetchProfileImageURL(username: profile.username) {_ in }
-                self.switchToTabBarController()
+                self?.profileImageService.fetchProfileImageURL(username: profile.username) {_ in }
+                self?.switchToTabBarController()
                 print("[SplashViewController: fetchProfile]: Profile fetched successfully")
             case .failure(let error):
                 print("[SplashViewController: fetchProfile]: Failed to fetch profile: \(error)")

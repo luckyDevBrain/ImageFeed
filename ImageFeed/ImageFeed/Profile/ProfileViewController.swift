@@ -74,7 +74,7 @@ final class ProfileViewController: UIViewController {
                 self.updateAvatar()
             }
         updateAvatar()
-        updateLableText()
+        updateLabelText()
         setup()
     }
     
@@ -88,7 +88,7 @@ final class ProfileViewController: UIViewController {
         avatarImageView.kf.setImage(with: url)
     }
     
-    func updateLableText() {
+    func updateLabelText() {
         if let profile = profileService.profile {
             nameLabel.text = profile.name
             loginNameLabel.text = profile.loginName
@@ -176,8 +176,8 @@ final class ProfileViewController: UIViewController {
             message: "Уверенные что хотите выйти?",
             buttons: [.yesButton, .noButton],
             identifier: "Logout",
-            completion: {
-                self.profileLogoutService.logout()
+            completion: { [weak self] in
+                self?.profileLogoutService.logout()
             }
         )
         AlertPresenter.showAlert(on: self, model: alertModel)

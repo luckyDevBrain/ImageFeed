@@ -11,7 +11,7 @@ import Kingfisher
 final class SingleImageViewController: UIViewController {
 
     //MARK: - Properties
-    
+
     var largeImageURL: URL?
 
     private let minimumZoomScale = 0.1
@@ -54,7 +54,7 @@ final class SingleImageViewController: UIViewController {
     }()
 
     //MARK: - Methods
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypBlack
@@ -62,7 +62,7 @@ final class SingleImageViewController: UIViewController {
 
         setImage()
     }
-    
+
     private func configureSubviews() {
         view.addSubview(scrollView)
         view.addSubview(shareButton)
@@ -107,7 +107,7 @@ final class SingleImageViewController: UIViewController {
         imageView.kf.cancelDownloadTask()
         dismiss(animated: true)
     }
-    
+
     @objc private func didTapShareButton() {
         guard let image = imageView.image else { return }
         let share = UIActivityViewController(activityItems: [image], applicationActivities: nil)
@@ -124,11 +124,10 @@ extension SingleImageViewController {
         let visibleRectSize = scrollView.bounds.size
         let imageSize = image.size
         guard imageSize.height != 0 && imageSize.width != 0 else { return }
-        let hScale = visibleRectSize.height / imageSize.height
-        let wScale = visibleRectSize.width / imageSize.width
-        let scale = min(maximumZoomScale, max(hScale, wScale))
-        scrollView.minimumZoomScale = min(maximumZoomScale, max(minimumZoomScale, min(hScale, wScale)))
-        scrollView.maximumZoomScale = 3 * scale
+
+        let hScale = visibleRectSize.width / imageSize.width
+        let vScale = visibleRectSize.height / imageSize.height
+        let scale = min(maximumZoomScale, max(minimumZoomScale, min(hScale, vScale)))
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
         let newContentSize = scrollView.contentSize
@@ -136,7 +135,7 @@ extension SingleImageViewController {
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
-    
+
     private func centerImageInScrollViewAfterZoom() {
         let xInset = max((scrollView.bounds.width - scrollView.contentSize.width) / 2, 0)
         let yInset = max((scrollView.bounds.height - scrollView.contentSize.height) / 2, 0)
@@ -145,11 +144,11 @@ extension SingleImageViewController {
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {
-    
+
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         imageView
     }
-    
+
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         centerImageInScrollViewAfterZoom()
     }

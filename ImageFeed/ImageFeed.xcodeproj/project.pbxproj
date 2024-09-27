@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		7324ED662CA3123F00F0193D /* ImagesListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7324ED652CA3123C00F0193D /* ImagesListService.swift */; };
 		7324ED682CA31ABA00F0193D /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7324ED672CA31AB600F0193D /* Photo.swift */; };
-		7324ED6A2CA31B8400F0193D /* DateFormatterAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7324ED692CA31B7300F0193D /* DateFormatterAdd.swift */; };
+		7324ED6A2CA31B8400F0193D /* DateConvertor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7324ED692CA31B7300F0193D /* DateConvertor.swift */; };
 		7324ED6C2CA31E0C00F0193D /* ProfileLogoutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7324ED6B2CA31DF200F0193D /* ProfileLogoutService.swift */; };
 		7329AFB22CA4946D00E4463E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7329AFB02CA4946D00E4463E /* Main.storyboard */; };
 		734927342C9DB7C100625455 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734927332C9DB7C100625455 /* NetworkClient.swift */; };
@@ -44,7 +44,7 @@
 /* Begin PBXFileReference section */
 		7324ED652CA3123C00F0193D /* ImagesListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListService.swift; sourceTree = "<group>"; };
 		7324ED672CA31AB600F0193D /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
-		7324ED692CA31B7300F0193D /* DateFormatterAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterAdd.swift; sourceTree = "<group>"; };
+		7324ED692CA31B7300F0193D /* DateConvertor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateConvertor.swift; sourceTree = "<group>"; };
 		7324ED6B2CA31DF200F0193D /* ProfileLogoutService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLogoutService.swift; sourceTree = "<group>"; };
 		7329AFB12CA4946D00E4463E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		734927332C9DB7C100625455 /* NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
@@ -149,7 +149,7 @@
 				737A04102C689EDC00AFE6FB /* Constants.swift */,
 				73AC2DA52C9F40580048447A /* AlertModel.swift */,
 				73AC2DA72C9F40690048447A /* AlertPresenter.swift */,
-				7324ED692CA31B7300F0193D /* DateFormatterAdd.swift */,
+				7324ED692CA31B7300F0193D /* DateConvertor.swift */,
 				7324ED672CA31AB600F0193D /* Photo.swift */,
 				73BC1DE62C6D1036008DE46D /* ServiceAccessLayer */,
 				73BC1DF02C6D4664008DE46D /* SplashViewController */,
@@ -300,7 +300,7 @@
 				73BC1DEB2C6D1071008DE46D /* OAuth2TokenStorage.swift in Sources */,
 				737A04162C6941DF00AFE6FB /* WebViewViewController.swift in Sources */,
 				73D05E512C836E7A00CBF8ED /* UIBlockingProgressHUD.swift in Sources */,
-				7324ED6A2CA31B8400F0193D /* DateFormatterAdd.swift in Sources */,
+				7324ED6A2CA31B8400F0193D /* DateConvertor.swift in Sources */,
 				73BEB5302C5C19DB00EE0679 /* ProfileViewController.swift in Sources */,
 				73BEB51A2C496B3000EE0679 /* ImagesListViewController.swift in Sources */,
 				73BEB52D2C578B8900EE0679 /* UIColor+Extensions.swift in Sources */,

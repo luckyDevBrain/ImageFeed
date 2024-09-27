@@ -18,7 +18,7 @@ final class AuthViewController: UIViewController {
     
     // MARK: - Singleton
     
-    let oauth2Service = OAuth2Service.shared
+    let oAuth2Service = OAuth2Service.shared
     
     // MARK: - Properties
     
@@ -62,7 +62,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         
         UIBlockingProgressHUD.show()
         
-        oauth2Service.fetchOAuthToken(code) { [weak self] result in
+        oAuth2Service.fetchOAuthToken(code) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             
             guard let self = self else { return }
@@ -73,7 +73,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 print("[AuthViewController: webViewViewController]: Authorization success, actual token: \(token)")
                 delegate?.didAuthenticate(self, didAuthenticateWithCode: code)
             case .failure:
-                print("[AuthViewController: webViewViewController]: Authorization erro")
+                print("[AuthViewController: webViewViewController]: Authorization error")
                 showNetworkError()
             }
             
