@@ -111,4 +111,8 @@ final class ProfileImageService {
         self.task = task
         task.resume()
     }
+    
+    func cleanAvatar() {
+        avatarURL = nil
+    }
 }

@@ -6,6 +6,13 @@
 //
 
 import UIKit
+import Kingfisher
+
+    // MARK: - Protocol
+
+protocol ImagesListCellDelegate: AnyObject {
+    func imageListCellDidTapLike(_ cell: ImagesListCell)
+}
 
 final class ImagesListCell: UITableViewCell {
     
@@ -13,6 +20,8 @@ final class ImagesListCell: UITableViewCell {
     
     static let reuseIdentifier = "ImagesListCell"
     private let gradientLayer = CAGradientLayer()
+    weak var delegate: ImagesListCellDelegate?
+
     
     // MARK: - Outlets
     
@@ -43,12 +52,37 @@ final class ImagesListCell: UITableViewCell {
         gradientLayer.locations = [0.0, 1.0]
         cellImage.layer.addSublayer(gradientLayer)
     }
-    
+
+    private func likeButtonImage(_ isLiked: Bool) -> UIImage {
+        isLiked ? UIImage.likeButtonOn : UIImage.likeButtonOff
+    }
+
     // MARK: - Public Methods
-    
-    func configure(cell: ImagesListCell, image: UIImage, text: String, likeImageName: String) {
-        cell.cellImage.image = image
-        cell.dateLabel.text = text
-        cell.likeButton.setImage(UIImage(named: likeImageName), for: .normal)
+    func setImage(_ image: UIImage) {
+        cellImage.image = image
+    }
+
+    func setText(_ text: String) {
+        dateLabel.text = text
+    }
+
+    func setIsLiked(_ isLiked: Bool) {
+        likeButton.setImage(likeButtonImage(isLiked), for: .normal)
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
+        cellImage.image = nil
+        dateLabel.text = nil
+        likeButton.setImage(nil, for: .normal)
+        
+        // Сброс градиента
+        gradientLayer.removeFromSuperlayer()
+        setupGradient()
+    }
+
+    @IBAction func likeButtonClicked(_ sender: Any) {
+        delegate?.imageListCellDidTapLike(self)
     }
 }

@@ -13,6 +13,7 @@ final class ProfileViewController: UIViewController {
     // MARK: - Singleton
     
     private let profileService = ProfileService.shared
+    private let profileLogoutService = ProfileLogoutService.shared
     
     // MARK: - Properties
     
@@ -73,7 +74,7 @@ final class ProfileViewController: UIViewController {
                 self.updateAvatar()
             }
         updateAvatar()
-        updateLableText()
+        updateLabelText()
         setup()
     }
     
@@ -87,7 +88,7 @@ final class ProfileViewController: UIViewController {
         avatarImageView.kf.setImage(with: url)
     }
     
-    func updateLableText() {
+    func updateLabelText() {
         if let profile = profileService.profile {
             nameLabel.text = profile.name
             loginNameLabel.text = profile.loginName
@@ -100,6 +101,7 @@ final class ProfileViewController: UIViewController {
     private func setup() {
         setupView()
         setupConstraints()
+        setupActions()
     }
     
     private func setupView() {
@@ -165,5 +167,19 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapLogoutButton() {
+        showLogoutAlert()
+    }
+    
+    func showLogoutAlert() {
+        let alertModel = AlertModel(
+            title: "Пока, пока!",
+            message: "Уверенные что хотите выйти?",
+            buttons: [.yesButton, .noButton],
+            identifier: "Logout",
+            completion: { [weak self] in
+                self?.profileLogoutService.logout()
+            }
+        )
+        AlertPresenter.showAlert(on: self, model: alertModel)
     }
 }

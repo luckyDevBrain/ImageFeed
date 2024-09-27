@@ -11,10 +11,6 @@ import SwiftKeychainWrapper
 final class OAuth2TokenStorage {
     private let tokenKey = "BearerToken"
     
-    init() {
-        KeychainWrapper.standard.removeObject(forKey: tokenKey)
-    }
-    
     var token: String? {
         get {
             return KeychainWrapper.standard.string(forKey: tokenKey)
