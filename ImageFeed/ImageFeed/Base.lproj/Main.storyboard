@@ -151,7 +151,6 @@
                     <value key="contentSizeForViewInPopover" type="size" width="414" height="896"/>
                     <connections>
                         <outlet property="tableView" destination="usl-Sl-fFY" id="6Pv-Iv-l3Y"/>
-                        <segue destination="woX-BL-jQq" kind="presentation" identifier="ShowSingleImage" id="s9u-xb-vYd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -201,80 +200,11 @@
             </objects>
             <point key="canvasLocation" x="-227" y="-1085"/>
         </scene>
-        <!--Single Image View Controller-->
-        <scene sceneID="GzY-ND-iIg">
-            <objects>
-                <viewController modalPresentationStyle="fullScreen" id="woX-BL-jQq" customClass="SingleImageViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Lvt-7m-HBg">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TRK-QG-sWc">
-                                <rect key="frame" x="8" y="8" width="48" height="48"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="3O7-zz-Bbi"/>
-                                    <constraint firstAttribute="width" constant="48" id="ZMI-xF-BxH"/>
-                                </constraints>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="nav_back_button_white"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nLu-Fz-YHC">
-                                <rect key="frame" x="171.66666666666666" y="785" width="50" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="Lfq-AS-WPr"/>
-                                    <constraint firstAttribute="height" constant="50" id="mCt-hQ-hUo"/>
-                                </constraints>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="share_button"/>
-                            </button>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" translatesAutoresizingMaskIntoConstraints="NO" id="5Ig-Th-FP5">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="dhO-eJ-sXW">
-                                        <rect key="frame" x="0.0" y="0.0" width="271" height="352"/>
-                                    </imageView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="dhO-eJ-sXW" firstAttribute="leading" secondItem="ooo-Lf-fqJ" secondAttribute="leading" id="P7Y-2E-Qq4"/>
-                                    <constraint firstAttribute="bottom" secondItem="dhO-eJ-sXW" secondAttribute="bottom" constant="500" id="QNS-DN-cNf"/>
-                                    <constraint firstItem="dhO-eJ-sXW" firstAttribute="top" secondItem="4qN-Bd-ei8" secondAttribute="top" id="QVu-i2-bjT"/>
-                                    <constraint firstAttribute="trailing" secondItem="dhO-eJ-sXW" secondAttribute="trailing" constant="122" id="m9b-bf-GyO"/>
-                                    <constraint firstItem="ooo-Lf-fqJ" firstAttribute="bottom" secondItem="dhO-eJ-sXW" secondAttribute="bottom" constant="500" id="t98-Xc-9t3"/>
-                                    <constraint firstItem="ooo-Lf-fqJ" firstAttribute="trailing" secondItem="dhO-eJ-sXW" secondAttribute="trailing" constant="122" id="tgm-Ri-vPU"/>
-                                </constraints>
-                                <viewLayoutGuide key="contentLayoutGuide" id="4qN-Bd-ei8"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="ooo-Lf-fqJ"/>
-                                <connections>
-                                    <outlet property="delegate" destination="woX-BL-jQq" id="yEu-75-Ypg"/>
-                                </connections>
-                            </scrollView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="RVU-SQ-xS3"/>
-                        <color key="backgroundColor" red="0.1019607843" green="0.1058823529" blue="0.1333333333" alpha="1" colorSpace="calibratedRGB"/>
-                        <constraints>
-                            <constraint firstItem="TRK-QG-sWc" firstAttribute="leading" secondItem="RVU-SQ-xS3" secondAttribute="leading" constant="8" id="2yy-5b-Gku"/>
-                            <constraint firstItem="5Ig-Th-FP5" firstAttribute="leading" secondItem="RVU-SQ-xS3" secondAttribute="leading" id="7RT-ki-b7E"/>
-                            <constraint firstItem="TRK-QG-sWc" firstAttribute="top" secondItem="RVU-SQ-xS3" secondAttribute="top" constant="8" id="7d8-G3-fRo"/>
-                            <constraint firstItem="RVU-SQ-xS3" firstAttribute="trailing" secondItem="5Ig-Th-FP5" secondAttribute="trailing" id="Iku-pa-fC5"/>
-                            <constraint firstAttribute="bottom" secondItem="5Ig-Th-FP5" secondAttribute="bottom" id="MTq-Gr-wFW"/>
-                            <constraint firstItem="nLu-Fz-YHC" firstAttribute="centerX" secondItem="RVU-SQ-xS3" secondAttribute="centerX" id="T4K-6g-7Bw"/>
-                            <constraint firstItem="RVU-SQ-xS3" firstAttribute="bottom" secondItem="nLu-Fz-YHC" secondAttribute="bottom" constant="17" id="gCA-1d-ocZ"/>
-                            <constraint firstItem="5Ig-Th-FP5" firstAttribute="top" secondItem="Lvt-7m-HBg" secondAttribute="top" id="uxq-f5-gEk"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="HWF-fh-XrS"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="yXD-e4-bno" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-228.24427480916029" y="-346.47887323943661"/>
-        </scene>
     </scenes>
     <resources>
         <image name="0" width="240" height="426.66665649414062"/>
         <image name="auth_screen_logo" width="60" height="60"/>
         <image name="like_button_on" width="42" height="42"/>
-        <image name="nav_back_button_white" width="24" height="24"/>
-        <image name="share_button" width="50" height="50"/>
         <image name="tab_editorial_active" width="30" height="30"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

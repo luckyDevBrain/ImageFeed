@@ -13,9 +13,11 @@
 		7324ED6C2CA31E0C00F0193D /* ProfileLogoutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7324ED6B2CA31DF200F0193D /* ProfileLogoutService.swift */; };
 		7329AFB22CA4946D00E4463E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7329AFB02CA4946D00E4463E /* Main.storyboard */; };
 		734927342C9DB7C100625455 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734927332C9DB7C100625455 /* NetworkClient.swift */; };
-		737A04112C689EDC00AFE6FB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737A04102C689EDC00AFE6FB /* Constants.swift */; };
+		737A04112C689EDC00AFE6FB /* AuthConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737A04102C689EDC00AFE6FB /* AuthConfiguration.swift */; };
 		737A04142C690CA200AFE6FB /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737A04132C690CA200AFE6FB /* AuthViewController.swift */; };
 		737A04162C6941DF00AFE6FB /* WebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737A04152C6941DF00AFE6FB /* WebViewViewController.swift */; };
+		73847B012CA729BF004AC47B /* AuthHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73847B002CA729BD004AC47B /* AuthHelper.swift */; };
+		73847B032CA72CA8004AC47B /* WebViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73847B022CA72CA5004AC47B /* WebViewPresenter.swift */; };
 		73AC2DA62C9F40600048447A /* AlertModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73AC2DA52C9F40580048447A /* AlertModel.swift */; };
 		73AC2DA82C9F40930048447A /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73AC2DA72C9F40690048447A /* AlertPresenter.swift */; };
 		73BC1DE92C6D1060008DE46D /* OAuth2Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC1DE82C6D1060008DE46D /* OAuth2Service.swift */; };
@@ -48,9 +50,11 @@
 		7324ED6B2CA31DF200F0193D /* ProfileLogoutService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLogoutService.swift; sourceTree = "<group>"; };
 		7329AFB12CA4946D00E4463E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		734927332C9DB7C100625455 /* NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
-		737A04102C689EDC00AFE6FB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		737A04102C689EDC00AFE6FB /* AuthConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthConfiguration.swift; sourceTree = "<group>"; };
 		737A04132C690CA200AFE6FB /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		737A04152C6941DF00AFE6FB /* WebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewController.swift; sourceTree = "<group>"; };
+		73847B002CA729BD004AC47B /* AuthHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthHelper.swift; sourceTree = "<group>"; };
+		73847B022CA72CA5004AC47B /* WebViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewPresenter.swift; sourceTree = "<group>"; };
 		73AC2DA52C9F40580048447A /* AlertModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertModel.swift; sourceTree = "<group>"; };
 		73AC2DA72C9F40690048447A /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		73BC1DE82C6D1060008DE46D /* OAuth2Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2Service.swift; sourceTree = "<group>"; };
@@ -94,6 +98,8 @@
 			children = (
 				737A04132C690CA200AFE6FB /* AuthViewController.swift */,
 				737A04152C6941DF00AFE6FB /* WebViewViewController.swift */,
+				73847B022CA72CA5004AC47B /* WebViewPresenter.swift */,
+				73847B002CA729BD004AC47B /* AuthHelper.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -146,7 +152,7 @@
 			children = (
 				73BEB5152C496B3000EE0679 /* AppDelegate.swift */,
 				73BEB5172C496B3000EE0679 /* SceneDelegate.swift */,
-				737A04102C689EDC00AFE6FB /* Constants.swift */,
+				737A04102C689EDC00AFE6FB /* AuthConfiguration.swift */,
 				73AC2DA52C9F40580048447A /* AlertModel.swift */,
 				73AC2DA72C9F40690048447A /* AlertPresenter.swift */,
 				7324ED692CA31B7300F0193D /* DateConvertor.swift */,
@@ -307,6 +313,7 @@
 				7324ED6C2CA31E0C00F0193D /* ProfileLogoutService.swift in Sources */,
 				7324ED662CA3123F00F0193D /* ImagesListService.swift in Sources */,
 				73D05E542C83A1D400CBF8ED /* ProfileService.swift in Sources */,
+				73847B012CA729BF004AC47B /* AuthHelper.swift in Sources */,
 				73AC2DA82C9F40930048447A /* AlertPresenter.swift in Sources */,
 				73AC2DA62C9F40600048447A /* AlertModel.swift in Sources */,
 				73BC1DE92C6D1060008DE46D /* OAuth2Service.swift in Sources */,
@@ -314,13 +321,14 @@
 				73D05E5C2C972BA500CBF8ED /* TabBarViewController.swift in Sources */,
 				73BC1DF32C6D468E008DE46D /* SplashViewController.swift in Sources */,
 				73BEB52A2C52EC1B00EE0679 /* ImagesListCell.swift in Sources */,
+				73847B032CA72CA8004AC47B /* WebViewPresenter.swift in Sources */,
 				7324ED682CA31ABA00F0193D /* Photo.swift in Sources */,
 				73BEB5162C496B3000EE0679 /* AppDelegate.swift in Sources */,
 				73BEB5182C496B3000EE0679 /* SceneDelegate.swift in Sources */,
 				73D05E562C84793200CBF8ED /* ProfileImageService.swift in Sources */,
 				737A04142C690CA200AFE6FB /* AuthViewController.swift in Sources */,
 				734927342C9DB7C100625455 /* NetworkClient.swift in Sources */,
-				737A04112C689EDC00AFE6FB /* Constants.swift in Sources */,
+				737A04112C689EDC00AFE6FB /* AuthConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
