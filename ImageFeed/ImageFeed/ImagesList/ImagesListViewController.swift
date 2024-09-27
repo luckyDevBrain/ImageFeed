@@ -151,6 +151,8 @@ extension ImagesListViewController: UITableViewDataSource {
             cell.delegate = self
             
             configCell(for: cell, with: indexPath)
+            // Отключаем выделение ячейки при нажатии
+            cell.selectionStyle = .none
             return cell
         } else {
             return UITableViewCell()
