@@ -18,7 +18,7 @@ final class AuthViewController: UIViewController {
     
     // MARK: - Singleton
     
-    let oAuth2Service = OAuth2Service.shared
+    let oauth2Service = OAuth2Service.shared
     
     // MARK: - Properties
     
@@ -44,9 +44,14 @@ final class AuthViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ShowWebViewSegueIdentifier {
-            guard
-                let webViewViewController = segue.destination as? WebViewViewController
-            else { fatalError("Failed to prepare for \(ShowWebViewSegueIdentifier)") }
+            guard let webViewViewController = segue.destination as? WebViewViewController else {
+                fatalError("Failed to prepare for \(ShowWebViewSegueIdentifier)")
+            }
+
+            let authHelper = AuthHelper()
+            let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+            webViewViewController.presenter = webViewPresenter
+            webViewPresenter.view = webViewViewController
             webViewViewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)
@@ -62,7 +67,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         
         UIBlockingProgressHUD.show()
         
-        oAuth2Service.fetchOAuthToken(code) { [weak self] result in
+        oauth2Service.fetchOAuthToken(code) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             
             guard let self = self else { return }
@@ -73,7 +78,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 print("[AuthViewController: webViewViewController]: Authorization success, actual token: \(token)")
                 delegate?.didAuthenticate(self, didAuthenticateWithCode: code)
             case .failure:
-                print("[AuthViewController: webViewViewController]: Authorization error")
+                print("[AuthViewController: webViewViewController]: Authorization erro")
                 showNetworkError()
             }
             

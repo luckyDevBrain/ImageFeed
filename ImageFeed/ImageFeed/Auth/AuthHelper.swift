@@ -20,28 +20,26 @@ final class AuthHelper: AuthHelperProtocol {
     }
 
     func authRequest() -> URLRequest? {
-        guard let url = authURL() else {
+        guard let authURL else {
             return nil
         }
-        
-        return URLRequest(url: url)
+
+        return URLRequest(url: authURL)
     }
 
-    func authURL() -> URL? {
-        guard
-            var urlComponents = URLComponents(string: configuration.authURLString)
-        else {
+    var authURL: URL? {
+        guard var urlComponents = URLComponents(string: configuration.authURLString) else {
             assertionFailure("Invalid authorization URL string: \(configuration.authURLString)")
             return nil
         }
-        
+
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: configuration.accessKey),
             URLQueryItem(name: "redirect_uri", value: configuration.redirectURI),
             URLQueryItem(name: "response_type", value: "code"),
             URLQueryItem(name: "scope", value: configuration.accessScope)
         ]
-        
+
         return urlComponents.url
     }
 

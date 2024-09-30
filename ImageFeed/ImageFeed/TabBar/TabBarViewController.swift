@@ -10,10 +10,18 @@ import UIKit
 final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureSubviews()
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        
         let imagesListViewController = storyboard.instantiateViewController(withIdentifier:"ImagesListViewController")
+        if let view = imagesListViewController as? ImagesListViewController {
+            view.presenter = ImagesListPresenter(view: view as? ImagesListInput)
+        }
+        
         let profileViewController = ProfileViewController()
+        profileViewController.presenter = ProfileViewPresenter(view: profileViewController)
+        
         profileViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage.tabProfileActive,
