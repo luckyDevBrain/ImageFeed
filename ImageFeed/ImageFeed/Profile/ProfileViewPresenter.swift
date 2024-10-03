@@ -9,14 +9,14 @@ import Foundation
 
 protocol ProfileViewInput: AnyObject {
     var presenter: ProfileViewOutput? { get set }
+    func updateAvatar(_ avatarURL: URL?)
 }
 
 protocol ProfileViewOutput: AnyObject {
     var view: ProfileViewInput? { get set }
-    var avatarURL: URL? { get }
     var profile: Profile? { get }
     
-    func addAvatarObserver(with block: @escaping () -> Void)
+    func viewDidLoad()
     func logOut()
 }
 
@@ -34,6 +34,12 @@ class ProfileViewPresenter {
     private let tokenStorage = OAuth2TokenStorage()
     private var profileImageServiceObserver: NSObjectProtocol?
     
+    var avatarURL: URL? {
+        guard let profileImageURL = ProfileImageService.shared.avatarURL
+        else { return nil }
+        return URL(string: profileImageURL)
+    }
+    
     init(view: ProfileViewInput?) {
         self.view = view
     }
@@ -41,10 +47,14 @@ class ProfileViewPresenter {
 
 extension ProfileViewPresenter: ProfileViewOutput {
     
-    var avatarURL: URL? {
-        guard let profileImageURL = ProfileImageService.shared.avatarURL
-        else { return nil }
-        return URL(string: profileImageURL)
+    func viewDidLoad() {
+        
+        view?.updateAvatar(avatarURL)
+        
+        addAvatarObserver { [weak self] in
+            guard let self else { return }
+            self.view?.updateAvatar(self.avatarURL)
+        }
     }
     
     var profile: Profile? {

@@ -39,6 +39,9 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        webView.accessibilityIdentifier = "WebView"
+        
         webView.navigationDelegate = self
         presenter?.viewDidLoad()
         

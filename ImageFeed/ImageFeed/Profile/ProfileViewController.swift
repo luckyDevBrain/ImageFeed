@@ -51,6 +51,7 @@ final class ProfileViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(named: "logout_button"), for: .normal)
         button.tintColor = UIColor(named: "ypRed")
+        button.accessibilityIdentifier = "LogoutButton"
         return button
     }()
     
@@ -58,22 +59,13 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        presenter?.addAvatarObserver { [weak self] in
-            guard let self else { return }
-            self.updateAvatar()
-        }
+        presenter?.viewDidLoad()
         
-        updateAvatar()
         updateLabelText()
         setup()
     }
     
     // MARK: - Private Methods
-    
-    private func updateAvatar() {
-        guard let profileImageURL = presenter?.avatarURL else { return }
-        avatarImageView.kf.setImage(with: profileImageURL)
-    }
     
     func updateLabelText() {
         if let profile = presenter?.profile {
@@ -160,7 +152,7 @@ final class ProfileViewController: UIViewController {
     func showLogoutAlert() {
         let alertModel = AlertModel(
             title: "Пока, пока!",
-            message: "Уверенные что хотите выйти?",
+            message: "Уверены что хотите выйти?",
             buttons: [.yesButton, .noButton],
             identifier: "Logout",
             completion: { [weak self] in
@@ -172,5 +164,7 @@ final class ProfileViewController: UIViewController {
 }
 
 extension ProfileViewController: ProfileViewInput {
-    
+    func updateAvatar(_ avatarURL: URL?) {
+        avatarImageView.kf.setImage(with: avatarURL)
+    }
 }

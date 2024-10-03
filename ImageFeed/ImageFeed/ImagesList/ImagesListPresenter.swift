@@ -8,18 +8,18 @@
 import Foundation
 
 protocol ImagesListInput: AnyObject {
-    var presenter: ImagesListOutput? { get set }
+    var presenter: ImagesListOutput! { get set }
+    func reloadData()
+    func checkTableViewForUpdates(at indexPaths: [IndexPath])
 }
 
 protocol ImagesListOutput: AnyObject {
-    var view: ImagesListInput? { get set }
-    var hasPhotos: Bool { get }
+    var view: ImagesListInput! { get set }
     var photos: [Photo] { get set }
     
+    func viewDidLoad()
+    func loadImages()
     func largeImageURL(at row: Int) -> URL?
-    func loadImages(completion: @escaping () -> Void)
-    func addServiceObserver(block: @escaping () -> Void)
-    func checkTableViewForUpdates(completion: @escaping ([IndexPath]) -> Void)
     func toggleLike(at index: Int, success: @escaping (Bool) -> Void, completion: @escaping () -> Void)
 }
 
@@ -27,10 +27,10 @@ class ImagesListPresenter {
     
     // MARK: - Properties
     
-    private let imagesListService = ImagesListService.shared
+    var imagesListService: ImagesListServiceProtocol = ImagesListService.shared
     private var imageListServiceObserver: NSObjectProtocol?
     
-    weak var view: ImagesListInput?
+    weak var view: ImagesListInput!
     
     var photos: [Photo] = []
     
@@ -41,22 +41,31 @@ class ImagesListPresenter {
 
 extension ImagesListPresenter: ImagesListOutput {
     
-    var hasPhotos: Bool {
-        !photos.isEmpty
-    }
-    
     // MARK: - Methods
+    
+    func viewDidLoad() {
+        
+        if photos.isEmpty {
+            loadImages()
+        }
+        
+        addServiceObserver { [weak self] in
+            guard let self else { return }
+            self.checkTableViewForUpdates()
+        }
+    }
     
     func largeImageURL(at index: Int) -> URL? {
         URL(string: photos[index].largeImageURL)
     }
     
-    func loadImages(completion: @escaping () -> Void) {
-        imagesListService.fetchPhotosNextPage(completion: { error in
+    func loadImages() {
+        imagesListService.fetchPhotosNextPage(completion: { [weak self] error in
             if let error {
                 print(error.localizedDescription)
             } else {
-                completion()
+                guard let self else { return }
+                self.view?.reloadData()
                 print("[ImagesListViewController: loadImages]: Перезагрузка экрана")
             }
         })
@@ -72,7 +81,7 @@ extension ImagesListPresenter: ImagesListOutput {
         }
     }
     
-    func checkTableViewForUpdates(completion: @escaping ([IndexPath]) -> Void) {
+    func checkTableViewForUpdates() {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             
@@ -86,7 +95,7 @@ extension ImagesListPresenter: ImagesListOutput {
                     IndexPath(row: i, section: 0)
                 }
                 
-                completion(indexPaths)
+                self.view?.checkTableViewForUpdates(at: indexPaths)
             }
         }
     }

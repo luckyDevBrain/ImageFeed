@@ -8,91 +8,101 @@
 import XCTest
 
 class Image_FeedUITests: XCTestCase {
-    private let app = XCUIApplication()
     
     override func setUpWithError() throws {
         continueAfterFailure = false
-        
-        app.launch()
-        
     }
     
     func testAuth() throws {
-        sleep(5)
-        app.buttons["Authenticate"].tap()
         
-        sleep(5)
-        let webView = app.webViews["UnsplashWebView"]
-        XCTAssertTrue(webView.waitForExistence(timeout: 10))
+        let app = XCUIApplication()
+        app.launch()
+        
+        app.buttons["LogIn"].tap()
+        
+        let webView = app.webViews["WebView"]
+        XCTAssertTrue(webView.waitForExistence(timeout: 6))
         
         let loginTextField = webView.descendants(matching: .textField).element
-        XCTAssertTrue(loginTextField.waitForExistence(timeout: 10))
+        XCTAssertTrue(loginTextField.waitForExistence(timeout: 6))
         
         loginTextField.tap()
-        loginTextField.typeText("_")
-        loginTextField.swipeUp()
+        loginTextField.typeText("тут вводим логин почтой")
+        if app.keyboards.element(boundBy: 0).exists {
+            app.toolbars.buttons["Done"].tap()
+        }
         
         let passwordTextField = webView.descendants(matching: .secureTextField).element
-        XCTAssertTrue(passwordTextField.waitForExistence(timeout: 10))
+        XCTAssertTrue(passwordTextField.waitForExistence(timeout: 3))
         
-        sleep(5)
         passwordTextField.tap()
-        sleep(5)
-        passwordTextField.typeText("_")
-        webView.swipeUp()
+        passwordTextField.typeText("тут вводим длинный пароль")
+        if app.keyboards.element(boundBy: 0).exists {
+            app.toolbars.buttons["Done"].tap()
+        }
         
         webView.buttons["Login"].tap()
         
-        let tablesQuerry = app.tables
-        let cell = tablesQuerry.children(matching: .cell).element(boundBy: 0)
-        XCTAssertTrue(cell.waitForExistence(timeout: 20))
+        let cell = app.tables.children(matching: .cell).element(boundBy: 0)
         
+        XCTAssertTrue(cell.waitForExistence(timeout: 5))
     }
     
     func testFeed() throws {
-        sleep(5)
-        let tablesQuery = app.tables
-        sleep(5)
-        let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
-        cell.swipeUp()
         
-        sleep(10)
+        let app = XCUIApplication()
+        app.launch()
         
-        let cellToLike = tablesQuery.children(matching: .cell).element(boundBy: 1)
+        let table = app.tables.firstMatch
         
-        cellToLike.buttons["like_button_on"].tap()
-        sleep(3)
-        cellToLike.buttons["like_button_on"].tap()
+        table.swipeUp()
+        sleep(2)
         
-        sleep(5)
+        let topCell = table.cells.element(boundBy: 0)
+        XCTAssertTrue(topCell.waitForExistence(timeout: 3))
         
-        cellToLike.tap()
+        let likeButton = topCell.buttons["LikeButton"].firstMatch
+        XCTAssertTrue(likeButton.waitForExistence(timeout: 3))
         
-        sleep(5)
+        likeButton.tap()
+        sleep(2)
+        likeButton.tap()
+        sleep(2)
         
+        topCell.tap()
         let image = app.scrollViews.images.element(boundBy: 0)
-        image.pinch(withScale: 3, velocity: 1)
+        XCTAssertTrue(image.waitForExistence(timeout: 5))
+        
+        image.pinch(withScale: 2, velocity: 1)
         image.pinch(withScale: 0.5, velocity: -1)
         
-        let navBackButtonWhiteButton = app.buttons["nav_back_button_white"]
-        navBackButtonWhiteButton.tap()
+        let backButton = app.buttons["BackButton"]
+        XCTAssertTrue(backButton.waitForExistence(timeout: 3))
         
+        backButton.tap()
+        XCTAssertTrue(topCell.waitForExistence(timeout: 3))
     }
     
     func testProfile() throws {
-        sleep(10)
+        
+        let app = XCUIApplication()
+        app.launch()
+        
+        sleep(4)
         app.tabBars.buttons.element(boundBy: 1).tap()
+        sleep(1)
         
-        XCTAssertTrue(app.staticTexts["Kirill Kuznetsov"].exists)
-        XCTAssertTrue(app.staticTexts["@luckydevbrain"].exists)
+        XCTAssertTrue(app.staticTexts["тут вводим Имя Фамилия"].exists)
+        XCTAssertTrue(app.staticTexts["тут вводим @Никнейм"].exists)
         
-        app.buttons["logout_button"].tap()
+        app.buttons["LogoutButton"].tap()
+        sleep(1)
         
-        sleep(3)
-        app.alerts["Уверены, что хотите выйти?"].scrollViews.otherElements.buttons["Да"].tap()
+        let alert = app.alerts["Logout"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 1))
         
-        sleep(5)
-        XCTAssertTrue(app.buttons["Authenticate"].exists)
+        alert.scrollViews.otherElements.buttons["Да"].tap()
+        sleep(1)
+        XCTAssertTrue(app.buttons["LogIn"].waitForExistence(timeout: 2))
     }
-    
 }

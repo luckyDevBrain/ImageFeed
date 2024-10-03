@@ -12,7 +12,7 @@ final class ImagesListViewController: UIViewController {
     
     // MARK: - Properties
     
-    var presenter: ImagesListOutput?
+    var presenter: ImagesListOutput!
     
     private let imagesListCell = ImagesListCell()
     
@@ -32,21 +32,13 @@ final class ImagesListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.delegate = self
         tableView.dataSource = self
         
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         
-        guard let presenter else { return }
-        
-        if !presenter.hasPhotos {
-            loadImages()
-        }
-        
-        presenter.addServiceObserver { [weak self] in
-            guard let self else { return }
-            self.checkTableViewForUpdates()
-        }
+        presenter?.viewDidLoad()
     }
     
     // MARK: - Navigation
@@ -55,9 +47,9 @@ final class ImagesListViewController: UIViewController {
         
         let singleImageViewController = SingleImageViewController()
         
-            //Проверяем корректность URL для картинки
+        //Проверяем корректность URL для картинки
         guard let largeImageURL = presenter?.largeImageURL(at: indexPath.row) else {
-                //Если URL некорректен, показываем алерт с ошибкой
+            //Если URL некорректен, показываем алерт с ошибкой
             let alertModel = AlertModel(
                 title: "Ошибка",
                 message: "Не удалось загрузить изображение. Пожалуйста, попробуйте позже.",
@@ -74,24 +66,6 @@ final class ImagesListViewController: UIViewController {
         singleImageViewController.modalPresentationStyle = .fullScreen
         present(singleImageViewController, animated: true)
     }
-    
-    // MARK: - Private Methods
-    
-    private func loadImages() {
-        presenter?.loadImages { [weak self] in
-            guard let self else { return }
-            self.tableView.reloadData()
-        }
-    }
-    
-    private func checkTableViewForUpdates() {
-        presenter?.checkTableViewForUpdates { [weak self] indexPaths in
-            guard let self else { return }
-            self.tableView.performBatchUpdates {
-                self.tableView.insertRows(at: indexPaths, with: .automatic)
-            } completion: { _ in }
-        }
-    }
 }
 
 // MARK: - Extension
@@ -100,13 +74,13 @@ extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         guard let presenter, let photo = presenter.photos[safeIndex: indexPath.row]
         else { return }
-
+        
         let dateCreated = photo.createdAt ?? Date()
         let dateCreatedString = dateFormatter.string(from: dateCreated)
         cell.setText(dateCreatedString)
         
         cell.setIsLiked(photo.isLiked)  // Установка состояния лайка
-
+        
         cell.cellImage.kf.indicatorType = .activity
         
         cell.cellImage.kf.setImage(
@@ -150,7 +124,7 @@ extension ImagesListViewController: UITableViewDelegate {
         guard let imagesCount = presenter?.photos.count else { return }
         
         if indexPath.row == (imagesCount - 1) {
-            loadImages()
+            presenter?.loadImages()
         }
     }
     
@@ -184,5 +158,18 @@ extension ImagesListViewController: ImagesListCellDelegate {
         }, completion: {
             UIBlockingProgressHUD.dismiss()
         })
+    }
+}
+
+extension ImagesListViewController: ImagesListInput {
+    
+    func reloadData() {
+        tableView.reloadData()
+    }
+    
+    func checkTableViewForUpdates(at indexPaths: [IndexPath]) {
+        tableView.performBatchUpdates {
+            self.tableView.insertRows(at: indexPaths, with: .automatic)
+        } completion: { _ in }
     }
 }

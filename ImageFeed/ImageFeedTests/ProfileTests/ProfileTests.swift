@@ -10,33 +10,28 @@ import XCTest
 
 final class ProfileTests: XCTestCase {
     
-    func testViewControllerDidTapLogOut() {
-        // Given
-        let viewController = ProfileViewControllerSpy()
+    func testViewControllerCallsViewDidLoad() {
+        
+        let profileViewController = ProfileViewController()
         let presenter = ProfilePresenterSpy()
+        presenter.view = profileViewController
         
-        viewController.presenter = presenter
-        presenter.view = viewController
+        profileViewController.presenter = presenter
         
-        // When
-        presenter.didTapLogout()
+        _ = profileViewController.view
         
-        // Then
-        XCTAssertTrue(presenter.isLogoutButtonTapped)
+        XCTAssertTrue(presenter.viewDidLoadCalled)
     }
     
-    func testViewControllerCallsViewDidLoad() {
-        // Given
-        let viewController = ProfileViewControllerSpy()
-        let presenter = ProfilePresenterSpy()
+    func testPresenterUpdatesAvatar() {
         
-        viewController.presenter = presenter
-        presenter.view = viewController
+        let profileViewController = ProfileViewControllerDummy()
+        let presenter = ProfileViewPresenter(view: profileViewController)
         
-        // When
+        profileViewController.presenter = presenter
+        
         presenter.viewDidLoad()
         
-        // Then
-        XCTAssertTrue(presenter.isViewDidLoadCalled)
+        XCTAssertTrue(profileViewController.updateAvatarCalled)
     }
 }
