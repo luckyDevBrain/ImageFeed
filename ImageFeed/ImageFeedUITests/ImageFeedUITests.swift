@@ -27,6 +27,7 @@ class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(loginTextField.waitForExistence(timeout: 6))
         
         loginTextField.tap()
+        webView.swipeUp()
         loginTextField.typeText("тут вводим логин почтой")
         if app.keyboards.element(boundBy: 0).exists {
             app.toolbars.buttons["Done"].tap()
@@ -36,6 +37,7 @@ class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(passwordTextField.waitForExistence(timeout: 3))
         
         passwordTextField.tap()
+        webView.swipeUp()
         passwordTextField.typeText("тут вводим длинный пароль")
         if app.keyboards.element(boundBy: 0).exists {
             app.toolbars.buttons["Done"].tap()
@@ -93,7 +95,7 @@ class Image_FeedUITests: XCTestCase {
         sleep(1)
         
         XCTAssertTrue(app.staticTexts["тут вводим Имя Фамилия"].exists)
-        XCTAssertTrue(app.staticTexts["тут вводим @Никнейм"].exists)
+        XCTAssertTrue(app.staticTexts["тут вводим @никнейм"].exists)
         
         app.buttons["LogoutButton"].tap()
         sleep(1)
