@@ -55,6 +55,12 @@ struct Profile {
     }
 }
 
+protocol ProfileServiceProtocol {
+    var profile: Profile? { get }
+    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void)
+    func cleanProfile()
+}
+
 final class ProfileService {
     
     // MARK: - Singleton
@@ -81,25 +87,28 @@ final class ProfileService {
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
-    
-    // MARK: - Public Methods
-    
+}
+
+// MARK: - ProfileServiceProtocol
+
+extension ProfileService: ProfileServiceProtocol {
+
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
-        
+
         assert(Thread.isMainThread)
         guard lastToken != token else {
             completion(.failure(ProfileServiceError.invalidRequest))
             return
         }
-        
+
         task?.cancel()
         lastToken = token
-        
+
         guard let request = makeURLRequest(token: token) else {
             print("[ProfileService: fetchProfile]: Make URLRequest error")
             return
         }
-        
+
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
             DispatchQueue.main.async {
                 switch result {
@@ -129,7 +138,7 @@ final class ProfileService {
         self.task = task
         task.resume()
     }
-    
+
     func cleanProfile() {
         profile = nil
     }

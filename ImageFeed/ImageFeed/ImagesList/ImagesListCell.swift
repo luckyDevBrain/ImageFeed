@@ -22,7 +22,6 @@ final class ImagesListCell: UITableViewCell {
     private let gradientLayer = CAGradientLayer()
     weak var delegate: ImagesListCellDelegate?
 
-    
     // MARK: - Outlets
     
     @IBOutlet var cellImage: UIImageView!
@@ -34,6 +33,8 @@ final class ImagesListCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         setupGradient()
+        
+        likeButton.accessibilityIdentifier = "LikeButton"
     }
     
     override func layoutSubviews() {

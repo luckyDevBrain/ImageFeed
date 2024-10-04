@@ -10,15 +10,9 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
-    // MARK: - Singleton
-    
-    private let profileService = ProfileService.shared
-    private let profileLogoutService = ProfileLogoutService.shared
+    var presenter: ProfileViewOutput?
     
     // MARK: - Properties
-    
-    private let tokenStorage = OAuth2TokenStorage()
-    private var profileImageServiceObserver: NSObjectProtocol?
     
     private var avatarImageView: UIImageView = {
         let imageView = UIImageView()
@@ -57,6 +51,7 @@ final class ProfileViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(named: "logout_button"), for: .normal)
         button.tintColor = UIColor(named: "ypRed")
+        button.accessibilityIdentifier = "LogoutButton"
         return button
     }()
     
@@ -64,32 +59,16 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        updateAvatar()
+        presenter?.viewDidLoad()
+        
         updateLabelText()
         setup()
     }
     
     // MARK: - Private Methods
     
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        avatarImageView.kf.setImage(with: url)
-    }
-    
     func updateLabelText() {
-        if let profile = profileService.profile {
+        if let profile = presenter?.profile {
             nameLabel.text = profile.name
             loginNameLabel.text = profile.loginName
             descriptionLabel.text = profile.bio
@@ -122,7 +101,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupActions() {
-        logoutButton.addTarget(self, action: #selector(self.didTapLogoutButton), for: .touchUpInside)
+        logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
     }
     
     private func setupUserImageConstraints() {
@@ -173,13 +152,19 @@ final class ProfileViewController: UIViewController {
     func showLogoutAlert() {
         let alertModel = AlertModel(
             title: "Пока, пока!",
-            message: "Уверенные что хотите выйти?",
+            message: "Уверены что хотите выйти?",
             buttons: [.yesButton, .noButton],
             identifier: "Logout",
             completion: { [weak self] in
-                self?.profileLogoutService.logout()
+                self?.presenter?.logOut()
             }
         )
         AlertPresenter.showAlert(on: self, model: alertModel)
+    }
+}
+
+extension ProfileViewController: ProfileViewInput {
+    func updateAvatar(_ avatarURL: URL?) {
+        avatarImageView.kf.setImage(with: avatarURL)
     }
 }
