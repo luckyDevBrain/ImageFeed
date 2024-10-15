@@ -17,22 +17,22 @@ struct Photo {
     var isLiked: Bool
     
     init(from photoResult: PhotoResult) {
-            id = photoResult.id
-            size = CGSize(width: photoResult.width, height: photoResult.height)
-            createdAt = DateConvertor.shared.iso8601DateFormatter.date(from: photoResult.createdAt)
-            welcomeDescription = photoResult.description
-            thumbImageURL = photoResult.urls.thumb
-            largeImageURL = photoResult.urls.full
-            isLiked = photoResult.likedByUser
-        }
+        id = photoResult.id
+        size = CGSize(width: photoResult.width, height: photoResult.height)
+        createdAt = DateConvertor.shared.iso8601DateFormatter.date(from: photoResult.createdAt)
+        welcomeDescription = photoResult.description
+        thumbImageURL = photoResult.urls.thumb
+        largeImageURL = photoResult.urls.full
+        isLiked = photoResult.likedByUser
+    }
     
     init(photo: Photo, isLiked: Bool) {
-            self.id = photo.id
-            self.size = photo.size
-            self.createdAt = photo.createdAt
-            self.welcomeDescription = photo.welcomeDescription
-            self.largeImageURL = photo.largeImageURL
-            self.thumbImageURL = photo.thumbImageURL
-            self.isLiked = isLiked
-        }
+        self.id = photo.id
+        self.size = photo.size
+        self.createdAt = photo.createdAt
+        self.welcomeDescription = photo.welcomeDescription
+        self.largeImageURL = photo.largeImageURL
+        self.thumbImageURL = photo.thumbImageURL
+        self.isLiked = isLiked
+    }
 }

@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - Protocol
+
 protocol ImagesListInput: AnyObject {
     var presenter: ImagesListOutput! { get set }
     func reloadData()
@@ -27,21 +29,22 @@ class ImagesListPresenter {
     
     // MARK: - Properties
     
-    var imagesListService: ImagesListServiceProtocol = ImagesListService.shared
+    var imagesListService: ImagesListServiceProtocol
     private var imageListServiceObserver: NSObjectProtocol?
     
     weak var view: ImagesListInput!
     
     var photos: [Photo] = []
     
-    init(view: ImagesListInput?) {
-        self.view = view
-    }
+    init(view: ImagesListInput?, imagesListService: ImagesListServiceProtocol = ImagesListService.shared) {
+            self.view = view
+            self.imagesListService = imagesListService
+        }
 }
 
+// MARK: - ImagesListOutput
+
 extension ImagesListPresenter: ImagesListOutput {
-    
-    // MARK: - Methods
     
     func viewDidLoad() {
         

@@ -7,7 +7,7 @@
 
 import Foundation
 
-// MARK: - Struct + Enum
+// MARK: - Enums
 
 enum ProfileServiceError: Error {
     case invalidRequest
@@ -20,6 +20,8 @@ enum ProfileServiceError: Error {
 private enum JSONError: Error {
     case decodingError
 }
+
+// MARK: - Structs
 
 private struct ProfileResult: Codable {
     var username: String
@@ -55,6 +57,8 @@ struct Profile {
     }
 }
 
+// MARK: - Protocol
+
 protocol ProfileServiceProtocol {
     var profile: Profile? { get }
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void)
@@ -66,14 +70,17 @@ final class ProfileService {
     // MARK: - Singleton
     
     static let shared = ProfileService()
-    private init() {}
     
-    // MARK: - Properties
+    // MARK: - Private Properties
     
     private(set) var profile: Profile?
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     private var lastToken: String?
+    
+    // MARK: - Initializers
+    
+    private init() {}
     
     // MARK: - Private Methods
     
@@ -92,23 +99,23 @@ final class ProfileService {
 // MARK: - ProfileServiceProtocol
 
 extension ProfileService: ProfileServiceProtocol {
-
+    
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
-
+        
         assert(Thread.isMainThread)
         guard lastToken != token else {
             completion(.failure(ProfileServiceError.invalidRequest))
             return
         }
-
+        
         task?.cancel()
         lastToken = token
-
+        
         guard let request = makeURLRequest(token: token) else {
             print("[ProfileService: fetchProfile]: Make URLRequest error")
             return
         }
-
+        
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
             DispatchQueue.main.async {
                 switch result {
@@ -138,7 +145,7 @@ extension ProfileService: ProfileServiceProtocol {
         self.task = task
         task.resume()
     }
-
+    
     func cleanProfile() {
         profile = nil
     }

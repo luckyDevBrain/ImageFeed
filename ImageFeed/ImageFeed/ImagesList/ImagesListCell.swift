@@ -8,7 +8,7 @@
 import UIKit
 import Kingfisher
 
-    // MARK: - Protocol
+// MARK: - Protocol
 
 protocol ImagesListCellDelegate: AnyObject {
     func imageListCellDidTapLike(_ cell: ImagesListCell)
@@ -16,12 +16,15 @@ protocol ImagesListCellDelegate: AnyObject {
 
 final class ImagesListCell: UITableViewCell {
     
-    // MARK: - Properties
+    // MARK: - Public Properties
     
     static let reuseIdentifier = "ImagesListCell"
-    private let gradientLayer = CAGradientLayer()
     weak var delegate: ImagesListCellDelegate?
-
+    
+    // MARK: - Private Properties
+    
+    private let gradientLayer = CAGradientLayer()
+    
     // MARK: - Outlets
     
     @IBOutlet var cellImage: UIImageView!
@@ -46,31 +49,6 @@ final class ImagesListCell: UITableViewCell {
         gradientLayer.frame = CGRect(x: 0, y: dateLabelFrame.minY, width: cellImage.bounds.width, height: gradientHeight)
     }
     
-    // MARK: - Private Methods
-    
-    private func setupGradient() {
-        gradientLayer.colors = [UIColor.black.withAlphaComponent(0.7).cgColor, UIColor.clear.cgColor]
-        gradientLayer.locations = [0.0, 1.0]
-        cellImage.layer.addSublayer(gradientLayer)
-    }
-
-    private func likeButtonImage(_ isLiked: Bool) -> UIImage {
-        isLiked ? UIImage.likeButtonOn : UIImage.likeButtonOff
-    }
-
-    // MARK: - Public Methods
-    func setImage(_ image: UIImage) {
-        cellImage.image = image
-    }
-
-    func setText(_ text: String) {
-        dateLabel.text = text
-    }
-
-    func setIsLiked(_ isLiked: Bool) {
-        likeButton.setImage(likeButtonImage(isLiked), for: .normal)
-    }
-
     override func prepareForReuse() {
         super.prepareForReuse()
         cellImage.kf.cancelDownloadTask()
@@ -82,7 +60,34 @@ final class ImagesListCell: UITableViewCell {
         gradientLayer.removeFromSuperlayer()
         setupGradient()
     }
-
+    
+    // MARK: - Public Methods
+    func setImage(_ image: UIImage) {
+        cellImage.image = image
+    }
+    
+    func setText(_ text: String) {
+        dateLabel.text = text
+    }
+    
+    func setIsLiked(_ isLiked: Bool) {
+        likeButton.setImage(likeButtonImage(isLiked), for: .normal)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setupGradient() {
+        gradientLayer.colors = [UIColor.black.withAlphaComponent(0.7).cgColor, UIColor.clear.cgColor]
+        gradientLayer.locations = [0.0, 1.0]
+        cellImage.layer.addSublayer(gradientLayer)
+    }
+    
+    private func likeButtonImage(_ isLiked: Bool) -> UIImage {
+        isLiked ? UIImage.likeButtonOn : UIImage.likeButtonOff
+    }
+    
+    // MARK: - Actions
+    
     @IBAction func likeButtonClicked(_ sender: Any) {
         delegate?.imageListCellDidTapLike(self)
     }

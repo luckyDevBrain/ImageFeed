@@ -68,7 +68,7 @@ final class ImagesListViewController: UIViewController {
     }
 }
 
-// MARK: - Extension
+// MARK: - Cell Configuration
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
@@ -98,6 +98,8 @@ extension ImagesListViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
+
 extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -117,6 +119,8 @@ extension ImagesListViewController: UITableViewDataSource {
         }
     }
 }
+
+// MARK: - UITableViewDelegate
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -145,6 +149,8 @@ extension ImagesListViewController: UITableViewDelegate {
     }
 }
 
+// MARK: - ImagesListCellDelegate
+
 extension ImagesListViewController: ImagesListCellDelegate {
     
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
@@ -160,6 +166,8 @@ extension ImagesListViewController: ImagesListCellDelegate {
         })
     }
 }
+
+// MARK: - ImagesListInput
 
 extension ImagesListViewController: ImagesListInput {
     

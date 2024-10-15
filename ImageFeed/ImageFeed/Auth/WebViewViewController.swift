@@ -24,16 +24,19 @@ protocol WebViewViewControllerProtocol: AnyObject {
 
 final class WebViewViewController: UIViewController, WebViewViewControllerProtocol {
     
-    // MARK: - Properties
+    // MARK: - Public Properties
     
     var presenter: WebViewPresenterProtocol?
     weak var delegate: WebViewViewControllerDelegate?
-    private var estimatedProgressObservation: NSKeyValueObservation?
     
     // MARK: - Outlets
     
     @IBOutlet private var webView: WKWebView!
     @IBOutlet weak var progressView: UIProgressView!
+    
+    // MARK: - Private Properties
+    
+    private var estimatedProgressObservation: NSKeyValueObservation?
     
     // MARK: - Lifecycle
     
@@ -47,11 +50,11 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
         
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
-            options: [],
-            changeHandler: { [weak self] _, _ in
-                guard let self = self else { return }
-                self.presenter?.didUpdateProgressValue(self.webView.estimatedProgress)
-            })
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.presenter?.didUpdateProgressValue(self.webView.estimatedProgress)
+             })
     }
     
     // MARK: - WebViewViewControllerProtocol
@@ -59,7 +62,7 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
     func load(request: URLRequest) {
         webView.load(request)
     }
-
+    
     func setProgressValue(_ newValue: Float) {
         progressView.progress = newValue
     }

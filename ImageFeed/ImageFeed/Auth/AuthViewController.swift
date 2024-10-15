@@ -20,10 +20,13 @@ final class AuthViewController: UIViewController {
     
     let oauth2Service = OAuth2Service.shared
     
-    // MARK: - Properties
+    // MARK: - Public Properties
+    
+    weak var delegate: AuthViewControllerDelegate?
+    
+    // MARK: - Private Properties
     
     private let ShowWebViewSegueIdentifier: String = "ShowWebView"
-    weak var delegate: AuthViewControllerDelegate?
     
     // MARK: Lifecycle
     
@@ -33,13 +36,6 @@ final class AuthViewController: UIViewController {
         configureBackButton()
     }
     
-    // MARK: - Private Methods
-    
-    private func configureBackButton() {
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem?.tintColor = UIColor.ypBlack
-    }
-    
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -47,7 +43,7 @@ final class AuthViewController: UIViewController {
             guard let webViewViewController = segue.destination as? WebViewViewController else {
                 fatalError("Failed to prepare for \(ShowWebViewSegueIdentifier)")
             }
-
+            
             let authHelper = AuthHelper()
             let webViewPresenter = WebViewPresenter(authHelper: authHelper)
             webViewViewController.presenter = webViewPresenter
@@ -57,9 +53,16 @@ final class AuthViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
+    
+    // MARK: - Private Methods
+    
+    private func configureBackButton() {
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem?.tintColor = UIColor.ypBlack
+    }
 }
 
-// MARK: - Extension
+// MARK: - Extensions
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {

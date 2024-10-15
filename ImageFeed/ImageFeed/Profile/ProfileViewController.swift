@@ -10,9 +10,11 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
+    // MARK: - Public Properties
+    
     var presenter: ProfileViewOutput?
     
-    // MARK: - Properties
+    // MARK: - Private Properties
     
     private var avatarImageView: UIImageView = {
         let imageView = UIImageView()
@@ -56,6 +58,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -65,7 +68,7 @@ final class ProfileViewController: UIViewController {
         setup()
     }
     
-    // MARK: - Private Methods
+    // MARK: - Public Methods
     
     func updateLabelText() {
         if let profile = presenter?.profile {
@@ -76,6 +79,8 @@ final class ProfileViewController: UIViewController {
             print("profile was not found")
         }
     }
+    
+    // MARK: - Private Methods
     
     private func setup() {
         setupView()
@@ -162,6 +167,8 @@ final class ProfileViewController: UIViewController {
         AlertPresenter.showAlert(on: self, model: alertModel)
     }
 }
+
+// MARK: - Extensions
 
 extension ProfileViewController: ProfileViewInput {
     func updateAvatar(_ avatarURL: URL?) {

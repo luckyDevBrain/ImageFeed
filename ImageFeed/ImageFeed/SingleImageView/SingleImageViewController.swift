@@ -54,7 +54,7 @@ final class SingleImageViewController: UIViewController {
         return backButton
     }()
     
-    //MARK: - Methods
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,6 +63,8 @@ final class SingleImageViewController: UIViewController {
         
         setImage()
     }
+    
+    // MARK: - Private Methods
     
     private func configureSubviews() {
         view.addSubview(scrollView)
@@ -103,6 +105,8 @@ final class SingleImageViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: - Actions
     
     @objc private func didTapBackButton() {
         imageView.kf.cancelDownloadTask()

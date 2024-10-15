@@ -79,9 +79,18 @@ final class WebViewTests: XCTestCase {
         
         let authHelper = AuthHelper()
         let codeValue = "code value"
-        var urlComponents = URLComponents(string: "https://unsplash.com/oauth/authorize/native")!
+       
+        guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/authorize/native") else {
+            XCTFail("Не удалось создать URLComponents")
+            return
+        }
+        
         urlComponents.queryItems = [URLQueryItem(name: "code", value: codeValue)]
-        let authURL = urlComponents.url!
+        
+        guard let authURL = urlComponents.url else {
+            XCTFail("Не удалось получить URL из URLComponents")
+            return
+        }
         
         let code = authHelper.code(from: authURL)
         

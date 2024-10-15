@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - Protocol
+
 protocol ProfileViewInput: AnyObject {
     var presenter: ProfileViewOutput? { get set }
     func updateAvatar(_ avatarURL: URL?)
@@ -22,18 +24,14 @@ protocol ProfileViewOutput: AnyObject {
 
 class ProfileViewPresenter {
     
-    weak var view: ProfileViewInput?
-    
     // MARK: - Singleton
     
     private let profileService = ProfileService.shared
     private let profileLogoutService = ProfileLogoutService.shared
     
-    // MARK: - Properties
+    // MARK: - Public Properties
     
-    private let tokenStorage = OAuth2TokenStorage()
-    private var profileImageServiceObserver: NSObjectProtocol?
-    
+    weak var view: ProfileViewInput?
     var avatarURL: URL? {
         guard let profileImageURL = ProfileImageService.shared.avatarURL
         else { return nil }
@@ -43,7 +41,14 @@ class ProfileViewPresenter {
     init(view: ProfileViewInput?) {
         self.view = view
     }
+    
+    // MARK: - Private Properties
+    
+    private let tokenStorage = OAuth2TokenStorage()
+    private var profileImageServiceObserver: NSObjectProtocol?
 }
+
+// MARK: - Extensions
 
 extension ProfileViewPresenter: ProfileViewOutput {
     

@@ -7,7 +7,7 @@
 
 import UIKit
 
-// MARK: - Enum
+// MARK: - Enums
 
 enum NetworkError: Error {
     case httpStatusCode(Int)
