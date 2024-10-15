@@ -9,7 +9,7 @@ import Foundation
 
 final class ProfileImageService {
     
-    // MARK: Struct + Enum
+    // MARK: Structs
     
     private struct ProfileImage: Decodable {
         let small: String
@@ -28,35 +28,22 @@ final class ProfileImageService {
     // MARK: - Singleton
     
     static let shared = ProfileImageService()
-    private init() {}
     
-    // MARK: - Properties
+    // MARK: - Public Properties
     
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
-    
-    let storage = OAuth2TokenStorage()
     private(set) var avatarURL: String?
+    
+    // MARK: - Private Properties
+    
+    private let storage = OAuth2TokenStorage()
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     private var lastUsername: String?
     
-    // MARK: - Private Methods
+    // MARK: - Initializers
     
-    private func makeProfileImageRequest(username: String) -> URLRequest? {
-        guard let baseURL = URL(string: "https://api.unsplash.com") else {
-            assertionFailure("[ProfileImageService: makeProfileImageRequest]: Failed to create URL")
-            return nil
-        }
-        
-        guard let url = URL(string: "/users/\(username)", relativeTo: baseURL) else {
-            return nil
-        }
-        
-        var request = URLRequest(url: url)
-        request.addValue("Bearer \(storage.token ?? "")", forHTTPHeaderField: "Authorization")
-        request.httpMethod = HTTPMethods.get
-        return request
-    }
+    private init() {}
     
     // MARK: - Public Methods
     
@@ -114,5 +101,23 @@ final class ProfileImageService {
     
     func cleanAvatar() {
         avatarURL = nil
+    }
+    
+    // MARK: - Private Methods
+    
+    private func makeProfileImageRequest(username: String) -> URLRequest? {
+        guard let baseURL = URL(string: "https://api.unsplash.com") else {
+            assertionFailure("[ProfileImageService: makeProfileImageRequest]: Failed to create URL")
+            return nil
+        }
+        
+        guard let url = URL(string: "/users/\(username)", relativeTo: baseURL) else {
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.addValue("Bearer \(storage.token ?? "")", forHTTPHeaderField: "Authorization")
+        request.httpMethod = HTTPMethods.get
+        return request
     }
 }

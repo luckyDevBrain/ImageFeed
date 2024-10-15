@@ -9,8 +9,8 @@ import UIKit
 import ProgressHUD
 
 final class UIBlockingProgressHUD {
-
-    //MARK: - Properties
+    
+    // MARK: - Private Properties
     
     private static var window: UIWindow? {
         var window: UIWindow?
@@ -21,7 +21,7 @@ final class UIBlockingProgressHUD {
         return window
     }
     
-    //MARK: - Methods
+    // MARK: - Public Methods
     
     static func show() {
         DispatchQueue.main.async {

@@ -9,7 +9,7 @@ import UIKit
 
 final class OAuth2Service {
     
-    // MARK: - Enum + Struct
+    // MARK: - Enums
     
     private enum JSONError: Error {
         case decodingError
@@ -18,6 +18,8 @@ final class OAuth2Service {
     private enum AuthServiceError: Error {
         case invalidRequest
     }
+    
+    // MARK: - Structs
     
     struct OAuthTokenResponseBody: Decodable {
         let accessToken: String
@@ -39,14 +41,15 @@ final class OAuth2Service {
     
     static let shared = OAuth2Service()
     
-    // MARK: - Properties
+    // MARK: - Public Properties
+    
+    let urlSession = URLSession.shared
+    
+    // MARK: - Private Properties
     
     private let tokenStorage = OAuth2TokenStorage()
-    let urlSession = URLSession.shared
     private var lastCode: String?
     private var task: URLSessionTask?
-    
-    private init() {}
     
     private(set) var authToken: String? {
         get {
@@ -56,6 +59,10 @@ final class OAuth2Service {
             tokenStorage.token = newValue
         }
     }
+    
+    // MARK: - Initializers
+    
+    private init() {}
     
     // MARK: - Public Methods
     

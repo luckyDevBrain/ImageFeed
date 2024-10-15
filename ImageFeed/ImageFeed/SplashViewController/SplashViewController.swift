@@ -16,7 +16,7 @@ final class SplashViewController: UIViewController {
     private let profileService = ProfileService.shared
     let profileImageService = ProfileImageService.shared
     
-    // MARK: - Properties
+    // MARK: - Private Properties
     
     private let storage = OAuth2TokenStorage()
     
@@ -87,7 +87,7 @@ final class SplashViewController: UIViewController {
     }
 }
 
-// MARK: - Extension
+// MARK: - Extensions
 
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String) {

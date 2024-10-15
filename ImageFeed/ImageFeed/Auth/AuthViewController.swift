@@ -18,12 +18,15 @@ final class AuthViewController: UIViewController {
     
     // MARK: - Singleton
     
-    let oAuth2Service = OAuth2Service.shared
+    let oauth2Service = OAuth2Service.shared
     
-    // MARK: - Properties
+    // MARK: - Public Properties
+    
+    weak var delegate: AuthViewControllerDelegate?
+    
+    // MARK: - Private Properties
     
     private let ShowWebViewSegueIdentifier: String = "ShowWebView"
-    weak var delegate: AuthViewControllerDelegate?
     
     // MARK: Lifecycle
     
@@ -33,28 +36,33 @@ final class AuthViewController: UIViewController {
         configureBackButton()
     }
     
+    // MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == ShowWebViewSegueIdentifier {
+            guard let webViewViewController = segue.destination as? WebViewViewController else {
+                fatalError("Failed to prepare for \(ShowWebViewSegueIdentifier)")
+            }
+            
+            let authHelper = AuthHelper()
+            let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+            webViewViewController.presenter = webViewPresenter
+            webViewPresenter.view = webViewViewController
+            webViewViewController.delegate = self
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
+    }
+    
     // MARK: - Private Methods
     
     private func configureBackButton() {
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem?.tintColor = UIColor.ypBlack
     }
-    
-    // MARK: - Navigation
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == ShowWebViewSegueIdentifier {
-            guard
-                let webViewViewController = segue.destination as? WebViewViewController
-            else { fatalError("Failed to prepare for \(ShowWebViewSegueIdentifier)") }
-            webViewViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
-    }
 }
 
-// MARK: - Extension
+// MARK: - Extensions
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
@@ -62,7 +70,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         
         UIBlockingProgressHUD.show()
         
-        oAuth2Service.fetchOAuthToken(code) { [weak self] result in
+        oauth2Service.fetchOAuthToken(code) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             
             guard let self = self else { return }
@@ -73,7 +81,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 print("[AuthViewController: webViewViewController]: Authorization success, actual token: \(token)")
                 delegate?.didAuthenticate(self, didAuthenticateWithCode: code)
             case .failure:
-                print("[AuthViewController: webViewViewController]: Authorization error")
+                print("[AuthViewController: webViewViewController]: Authorization erro")
                 showNetworkError()
             }
             
